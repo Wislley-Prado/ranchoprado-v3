@@ -1,47 +1,44 @@
 
 
-## Análise do PageSpeed - Nota 84
+## Diagnóstico corrigido (Supabase Pro - transformações funcionam)
 
-### O que está bom
-- **TBT 20ms** e **CLS 0** - excelentes, JavaScript e layout estáveis
-- Code-splitting, lazy loading e YouTube facade já implementados
+### Problemas reais
 
-### Problemas principais
+**1. Rancho novo não aparece no celular**
+- Cache localStorage com TTL de **15 minutos** (`TTL.LISTS = 15 * 60 * 1000`)
+- `refetchOnMount: false` + `refetchOnWindowFocus: false` = dados nunca atualizam enquanto cache é válido
+- No celular, abas ficam em background mais tempo, mantendo o cache stale
+- Solução: reduzir `staleTime` para 5 minutos e habilitar `refetchOnMount: true`
 
-| Métrica | Atual | Ideal | Causa provável |
-|---------|-------|-------|----------------|
-| FCP | 2.6s | <1.8s | CSS do Tailwind grande + JS inicial |
-| LCP | 3.6s | <2.5s | Thumbnail YouTube (`hqdefault.jpg`) como elemento LCP |
-| Speed Index | 4.5s | <3.4s | Consequência do FCP/LCP altos |
+**2. Imagens demoram a renderizar no celular**
+- O `srcSet` com `getOptimizedUrl` está correto para o plano Pro
+- Porém `loading="lazy"` nos RanchCards dentro de um `LazySection` com `rootMargin="300px"` cria **double lazy**: a seção só monta quando está a 300px do viewport, e depois as imagens só carregam quando estão no viewport novamente
+- Resultado: as imagens começam a baixar muito tarde no mobile
+- Solução: usar `loading="eager"` nos cards (já que o LazySection controla quando montar) e aumentar rootMargin para 500px
 
-### Plano de otimização para subir para 90+
+**3. LazySection atrasa a seção de Ranchos**
+- No mobile, há muitas seções antes (Hero, Anúncios, Dam, Lunar, Weather, Anúncios meio) que empurram Ranchos para longe
+- `rootMargin="300px"` pode não ser suficiente para iniciar o carregamento antes do scroll chegar
 
-#### 1. Preload da imagem LCP (thumbnail YouTube)
-O LCP é a thumbnail do YouTube no Hero. Adicionar `<link rel="preload">` no `index.html` para que o browser comece a baixar antes de processar o JS. Alternativa: usar `sddefault.jpg` (menor) ao invés de `hqdefault.jpg`.
+### Plano de correção
 
-#### 2. Inline critical CSS / reduzir CSS não usado
-O Tailwind gera um CSS grande. Adicionar `content` mais restritivo no `tailwind.config.ts` para reduzir CSS morto. Considerar `cssnano` no PostCSS.
+#### 1. Reduzir cache e habilitar refetch (`src/hooks/useOptimizedData.ts`)
+- `useRanchos`: mudar `staleTime` de `TTL.LISTS` (15min) para `5 * 60 * 1000` (5min)
+- Mudar `refetchOnMount: false` para `refetchOnMount: true`
+- Manter `refetchOnWindowFocus: false` para não gastar egress
 
-#### 3. Preload do chunk principal
-Adicionar `modulepreload` para o chunk do Hero no `index.html` para acelerar o FCP.
+#### 2. Remover double-lazy do RanchCard (`src/components/RanchCard.tsx`)
+- Mudar `loading="lazy"` para `loading="eager"` na imagem (o LazySection já controla quando o componente monta)
+- Manter `srcSet` e `getOptimizedUrl` (funciona no Pro)
 
-#### 4. Otimizar o Hero para renderizar sem esperar dados
-O Hero já usa placeholders, mas ainda importa 3 hooks (`useWeatherData`, `useDamData`, `useVideoSettings`). Mover esses hooks para serem carregados após a primeira renderização usando `useEffect` com estado lazy.
-
-#### 5. Adicionar `font-display: swap` e preconnect
-Embora não haja fontes externas, garantir que fontes do sistema sejam usadas sem bloqueio.
+#### 3. Aumentar rootMargin do Ranchos (`src/pages/Index.tsx`)
+- Mudar `rootMargin="300px"` para `rootMargin="600px"` na LazySection de RanchosSection para que comece a carregar mais cedo no scroll
 
 ### Arquivos a editar
 
 | Arquivo | Mudança |
 |---------|---------|
-| `index.html` | Adicionar `<link rel="preload" as="image">` para thumbnail YouTube |
-| `src/components/HeroSection.tsx` | Usar `sddefault.jpg` (menor) + defer hooks de dados |
-| `postcss.config.js` | Adicionar `cssnano` para minificar CSS em produção |
-| `vite.config.ts` | Habilitar `cssMinify` e `rollupOptions.output.manualChunks` para separar vendor |
-
-### Impacto esperado
-- FCP: 2.6s → ~1.8s (preload + CSS menor)
-- LCP: 3.6s → ~2.2s (preload thumbnail + imagem menor)
-- Score: 84 → ~90-92
+| `src/hooks/useOptimizedData.ts` | staleTime 5min, refetchOnMount true no useRanchos |
+| `src/components/RanchCard.tsx` | `loading="eager"` na img |
+| `src/pages/Index.tsx` | rootMargin="600px" na LazySection de Ranchos |
 
