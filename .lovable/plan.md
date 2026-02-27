@@ -1,37 +1,43 @@
 
 
-## Problema: Imagens demoram ~5s para aparecer e causam "pulo" na página
+## PageSpeed Mobile: 80 → 90+ (LCP 4.3s, FCP 2.7s)
 
-### Causa raiz
+### Problemas identificados
 
-O `LazySection` com `fallback={<SectionSkeleton />}` renderiza um skeleton de **256px** (`h-64`). Quando a seção real monta (com 3+ cards de ~500px cada), a página pula. Além disso, o fluxo atual é:
+**FCP 2.7s** - O bundle principal é grande. O `Index` importa eagerly `Header`, `HeroSection`, `WhatsAppButton`, `Footer`, e o `App.tsx` importa muitos componentes no nível raiz (`CookieConsent`, `TrackingScripts`, `PageViewTracker`, `DynamicFavicon`, `PWALifecycle`, `ScrollToTop`). Todos bloqueiam o primeiro paint.
 
-1. Scroll chega perto → LazySection monta o componente
-2. React.lazy baixa o chunk JS → Suspense exibe skeleton
-3. Componente monta → React Query busca dados do Supabase (mesmo com cache, leva 100-300ms)
-4. Dados chegam → Imagens começam a baixar (~2-5s no celular)
+**LCP 4.3s** - O LCP element no mobile é provavelmente o YouTube thumbnail. Está sendo preloaded no `index.html`, mas o `videoId` pode mudar via `useVideoSettings` (Supabase query), e o preload hardcoded aponta para `cN_BspPR2gg`. Se o ID mudou, o preload não ajuda. Além disso, o `PackageCard` ainda usa `loading="lazy"` (não foi atualizado como o `RanchCard`).
 
-São **4 etapas sequenciais** antes da imagem aparecer.
+### Correções
 
-### Solução: Remover LazySection dos Ranchos e Pacotes
+#### 1. `src/components/PackageCard.tsx` - Corrigir loading das imagens
+- Mudar `loading="lazy"` para `loading="eager"` (mesma correção do RanchCard)
+- Adicionar `fetchPriority="high"` e `decoding="async"`
+- Pacotes não estão mais em LazySection, então lazy causa atraso desnecessário
 
-Essas são seções **críticas para o negócio** - o usuário quer vê-las imediatamente. O LazySection fazia sentido para reduzir DOM inicial, mas está prejudicando a experiência.
+#### 2. `src/App.tsx` - Lazy load componentes não-críticos do layout
+- Tornar `CookieConsent`, `TrackingScripts`, `PageViewTracker`, `PWALifecycle`, `DynamicFavicon` lazy-loaded
+- Esses componentes não são visíveis no primeiro paint e bloqueiam o FCP
+- Usar `React.lazy` + `Suspense` com fallback null
+
+#### 3. `index.html` - Adicionar modulepreload do main chunk
+- Adicionar `<link rel="modulepreload">` para o entry point `/src/main.tsx`
+- Isso ajuda o browser a começar a parsear o JS mais cedo no mobile
+
+#### 4. `src/components/HeroSection.tsx` - Reduzir complexidade inicial
+- O `useLazyDataHooks` usa `Promise.all` com 3 dynamic imports que rodam após mount
+- Mover o inline SVG background pattern para CSS (evita re-render)
 
 ### Arquivos a editar
 
-**1. `src/pages/Index.tsx`**
-- Remover `LazySection` wrapper de `RanchosSection` e `PackagesSection`
-- Manter apenas o `Suspense` com fallback
-- Isso permite que o chunk JS e os dados comecem a carregar **imediatamente** ao montar a página, não apenas quando o usuário scrolla
-
-**2. `src/components/LazySection.tsx`**
-- Adicionar `min-height` no div do fallback para evitar layout shift nas seções que continuam lazy
-
-**3. `src/components/RanchCard.tsx`**
-- Adicionar `fetchpriority="high"` na imagem para que o browser priorize o download
+| Arquivo | Mudança |
+|---------|---------|
+| `src/components/PackageCard.tsx` | `loading="eager"`, `fetchPriority="high"`, `decoding="async"` |
+| `src/App.tsx` | Lazy load `CookieConsent`, `TrackingScripts`, `PageViewTracker`, `PWALifecycle`, `DynamicFavicon` |
+| `src/main.tsx` | Nenhuma mudança |
 
 ### Resultado esperado
-- Ranchos e Pacotes já estarão com dados carregados quando o usuário scrollar
-- Imagens começam a baixar antes, aparecendo instantaneamente ao scrollar
-- Sem "pulo" na página
+- FCP: ~2.7s → ~1.8s (menos JS bloqueante no primeiro paint)
+- LCP: ~4.3s → ~3.0s (imagens dos pacotes carregam eager, menos componentes bloqueando)
+- Score mobile: 80 → ~88-92
 
