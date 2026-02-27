@@ -1,54 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, Calendar, MapPin, Waves } from 'lucide-react';
-import { extractYouTubeId } from '@/hooks/useVideoSettings';
-
-// Lazy-load data hooks to not block first render
-const useLazyDataHooks = () => {
-  const [hooks, setHooks] = useState<{ useWeatherData?: any; useDamData?: any; useVideoSettings?: any }>({});
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    // Defer heavy hook imports until after first paint
-    Promise.all([
-      import('@/hooks/useWeatherData'),
-      import('@/hooks/useDamData'),
-      import('@/hooks/useVideoSettings'),
-    ]).then(([weather, dam, video]) => {
-      setHooks({
-        useWeatherData: weather.useWeatherData,
-        useDamData: dam.useDamData,
-        useVideoSettings: video.useVideoSettings,
-      });
-      setReady(true);
-    });
-  }, []);
-
-  return { hooks, ready };
-};
-
-// Wrapper component that uses data hooks after they're loaded
-const HeroDataProvider = ({ children }: { children: (data: any) => React.ReactNode }) => {
-  const { hooks, ready } = useLazyDataHooks();
-
-  if (!ready) {
-    return <>{children({ weatherData: null, damData: null, settings: null })}</>;
-  }
-
-  return <HeroDataConsumer hooks={hooks}>{children}</HeroDataConsumer>;
-};
-
-const HeroDataConsumer = ({ hooks, children }: { hooks: any; children: (data: any) => React.ReactNode }) => {
-  const { data: weatherData } = hooks.useWeatherData();
-  const { data: damData } = hooks.useDamData();
-  const { settings } = hooks.useVideoSettings();
-  return <>{children({ weatherData, damData, settings })}</>;
-};
+import { useWeatherData } from '@/hooks/useWeatherData';
+import { useDamData } from '@/hooks/useDamData';
+import { useVideoSettings, extractYouTubeId } from '@/hooks/useVideoSettings';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { data: weatherData } = useWeatherData();
+  const { data: damData } = useDamData();
+  const { settings } = useVideoSettings();
   const [showVideo, setShowVideo] = useState(false);
 
   const scrollToSection = (id: string) => {
@@ -74,7 +37,13 @@ const HeroSection = () => {
     }, 400);
   };
 
-  const DEFAULT_VIDEO_ID = 'cN_BspPR2gg';
+  const videoId = settings?.youtube_video_url 
+    ? extractYouTubeId(settings.youtube_video_url)
+    : 'cN_BspPR2gg';
+  const temperature = weatherData?.current.temperature || 24;
+  const damLevel = damData?.volume_util_percentual ? parseFloat(damData.volume_util_percentual).toFixed(1) : '86.0';
+  const windSpeed = weatherData?.current.wind_speed || 12;
+  const conditions = weatherData?.current.weather_description || 'Excelente';
 
   const formatTime = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleTimeString('pt-BR', {
@@ -82,19 +51,10 @@ const HeroSection = () => {
       minute: '2-digit'
     });
   };
+  const sunrise = weatherData?.current.sunrise ? formatTime(weatherData.current.sunrise) : '06:00';
+  const sunset = weatherData?.current.sunset ? formatTime(weatherData.current.sunset) : '18:30';
 
-  return <HeroDataProvider>{({ weatherData, damData, settings }) => {
-    const videoId = settings?.youtube_video_url 
-      ? extractYouTubeId(settings.youtube_video_url)
-      : DEFAULT_VIDEO_ID;
-    const temperature = weatherData?.current?.temperature || 24;
-    const damLevel = damData?.volume_util_percentual ? parseFloat(damData.volume_util_percentual).toFixed(1) : '86.0';
-    const windSpeed = weatherData?.current?.wind_speed || 12;
-    const conditions = weatherData?.current?.weather_description || 'Excelente';
-    const sunrise = weatherData?.current?.sunrise ? formatTime(weatherData.current.sunrise) : '06:00';
-    const sunset = weatherData?.current?.sunset ? formatTime(weatherData.current.sunset) : '18:30';
-
-    return <section id="home" className="relative min-h-screen bg-river-gradient flex items-center overflow-hidden">
+  return <section id="home" className="relative min-h-screen bg-river-gradient flex items-center overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzR2LTRINHY0aC00djJoNHY0aDJWNmg0VjRoLTR6bTAtMzBWMGgtMnY0aC00djJoNHY0aDJWNmg0VjRoLTR6TTYgMzR2LTRINHY0SDB2Mmg0djRoMnYtNGg0di0ySDZ6TTYgNFYwSDR2NEgwdjJoNHY0aDJWNmg0VjRINnoiLz48L2c+PC9nPjwvc3ZnPg==')] animate-wave"></div>
       </div>
@@ -182,8 +142,8 @@ const HeroSection = () => {
                         className="w-full h-full relative group cursor-pointer"
                         aria-label="Reproduzir vídeo"
                       >
-                         <img 
-                          src={`https://img.youtube.com/vi/${videoId}/sddefault.jpg`}
+                        <img 
+                          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
                           alt="Vídeo do Rio São Francisco"
                           className="w-full h-full object-cover"
                           loading="eager"
@@ -238,6 +198,5 @@ const HeroSection = () => {
         </div>
       </div>
     </section>;
-  }}</HeroDataProvider>;
 };
 export default HeroSection;
