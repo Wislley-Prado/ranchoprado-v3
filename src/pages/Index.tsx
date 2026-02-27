@@ -90,13 +90,17 @@ const Index = () => {
       </LazySection>
       
       {/* Conteúdo principal - defer */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <RanchosSection />
-      </Suspense>
+      <LazySection fallback={<SectionSkeleton />} rootMargin="300px">
+        <Suspense fallback={<SectionSkeleton />}>
+          <RanchosSection />
+        </Suspense>
+      </LazySection>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <PackagesSection />
-      </Suspense>
+      <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
+        <Suspense fallback={<SectionSkeleton />}>
+          <PackagesSection />
+        </Suspense>
+      </LazySection>
 
       <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
         <Suspense fallback={<SectionSkeleton />}>

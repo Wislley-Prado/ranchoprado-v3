@@ -50,7 +50,7 @@ const RanchCard = ({ ranch }: RanchCardProps) => {
               srcSet={`${getOptimizedUrl(ranch.images[0], 400)} 400w, ${getOptimizedUrl(ranch.images[0], 800)} 800w`}
               sizes="(max-width: 768px) 400px, 800px"
               alt={ranch.name}
-              loading="eager"
+              loading="lazy"
               decoding="async"
               width={400}
               height={192}

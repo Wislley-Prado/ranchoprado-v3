@@ -1,43 +1,47 @@
 
 
-## PageSpeed Mobile: 80 → 90+ (LCP 4.3s, FCP 2.7s)
+## Análise do PageSpeed - Nota 84
 
-### Problemas identificados
+### O que está bom
+- **TBT 20ms** e **CLS 0** - excelentes, JavaScript e layout estáveis
+- Code-splitting, lazy loading e YouTube facade já implementados
 
-**FCP 2.7s** - O bundle principal é grande. O `Index` importa eagerly `Header`, `HeroSection`, `WhatsAppButton`, `Footer`, e o `App.tsx` importa muitos componentes no nível raiz (`CookieConsent`, `TrackingScripts`, `PageViewTracker`, `DynamicFavicon`, `PWALifecycle`, `ScrollToTop`). Todos bloqueiam o primeiro paint.
+### Problemas principais
 
-**LCP 4.3s** - O LCP element no mobile é provavelmente o YouTube thumbnail. Está sendo preloaded no `index.html`, mas o `videoId` pode mudar via `useVideoSettings` (Supabase query), e o preload hardcoded aponta para `cN_BspPR2gg`. Se o ID mudou, o preload não ajuda. Além disso, o `PackageCard` ainda usa `loading="lazy"` (não foi atualizado como o `RanchCard`).
+| Métrica | Atual | Ideal | Causa provável |
+|---------|-------|-------|----------------|
+| FCP | 2.6s | <1.8s | CSS do Tailwind grande + JS inicial |
+| LCP | 3.6s | <2.5s | Thumbnail YouTube (`hqdefault.jpg`) como elemento LCP |
+| Speed Index | 4.5s | <3.4s | Consequência do FCP/LCP altos |
 
-### Correções
+### Plano de otimização para subir para 90+
 
-#### 1. `src/components/PackageCard.tsx` - Corrigir loading das imagens
-- Mudar `loading="lazy"` para `loading="eager"` (mesma correção do RanchCard)
-- Adicionar `fetchPriority="high"` e `decoding="async"`
-- Pacotes não estão mais em LazySection, então lazy causa atraso desnecessário
+#### 1. Preload da imagem LCP (thumbnail YouTube)
+O LCP é a thumbnail do YouTube no Hero. Adicionar `<link rel="preload">` no `index.html` para que o browser comece a baixar antes de processar o JS. Alternativa: usar `sddefault.jpg` (menor) ao invés de `hqdefault.jpg`.
 
-#### 2. `src/App.tsx` - Lazy load componentes não-críticos do layout
-- Tornar `CookieConsent`, `TrackingScripts`, `PageViewTracker`, `PWALifecycle`, `DynamicFavicon` lazy-loaded
-- Esses componentes não são visíveis no primeiro paint e bloqueiam o FCP
-- Usar `React.lazy` + `Suspense` com fallback null
+#### 2. Inline critical CSS / reduzir CSS não usado
+O Tailwind gera um CSS grande. Adicionar `content` mais restritivo no `tailwind.config.ts` para reduzir CSS morto. Considerar `cssnano` no PostCSS.
 
-#### 3. `index.html` - Adicionar modulepreload do main chunk
-- Adicionar `<link rel="modulepreload">` para o entry point `/src/main.tsx`
-- Isso ajuda o browser a começar a parsear o JS mais cedo no mobile
+#### 3. Preload do chunk principal
+Adicionar `modulepreload` para o chunk do Hero no `index.html` para acelerar o FCP.
 
-#### 4. `src/components/HeroSection.tsx` - Reduzir complexidade inicial
-- O `useLazyDataHooks` usa `Promise.all` com 3 dynamic imports que rodam após mount
-- Mover o inline SVG background pattern para CSS (evita re-render)
+#### 4. Otimizar o Hero para renderizar sem esperar dados
+O Hero já usa placeholders, mas ainda importa 3 hooks (`useWeatherData`, `useDamData`, `useVideoSettings`). Mover esses hooks para serem carregados após a primeira renderização usando `useEffect` com estado lazy.
+
+#### 5. Adicionar `font-display: swap` e preconnect
+Embora não haja fontes externas, garantir que fontes do sistema sejam usadas sem bloqueio.
 
 ### Arquivos a editar
 
 | Arquivo | Mudança |
 |---------|---------|
-| `src/components/PackageCard.tsx` | `loading="eager"`, `fetchPriority="high"`, `decoding="async"` |
-| `src/App.tsx` | Lazy load `CookieConsent`, `TrackingScripts`, `PageViewTracker`, `PWALifecycle`, `DynamicFavicon` |
-| `src/main.tsx` | Nenhuma mudança |
+| `index.html` | Adicionar `<link rel="preload" as="image">` para thumbnail YouTube |
+| `src/components/HeroSection.tsx` | Usar `sddefault.jpg` (menor) + defer hooks de dados |
+| `postcss.config.js` | Adicionar `cssnano` para minificar CSS em produção |
+| `vite.config.ts` | Habilitar `cssMinify` e `rollupOptions.output.manualChunks` para separar vendor |
 
-### Resultado esperado
-- FCP: ~2.7s → ~1.8s (menos JS bloqueante no primeiro paint)
-- LCP: ~4.3s → ~3.0s (imagens dos pacotes carregam eager, menos componentes bloqueando)
-- Score mobile: 80 → ~88-92
+### Impacto esperado
+- FCP: 2.6s → ~1.8s (preload + CSS menor)
+- LCP: 3.6s → ~2.2s (preload thumbnail + imagem menor)
+- Score: 84 → ~90-92
 

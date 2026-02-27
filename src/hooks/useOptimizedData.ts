@@ -235,11 +235,11 @@ export const useRanchos = (onlyAvailable = true) => {
       }
     ),
     {
-      staleTime: 5 * 60 * 1000, // 5 min para ranchos aparecerem mais rápido
+      staleTime: TTL.LISTS,
       cacheTime: TTL.STATIC,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      refetchOnMount: true,
+      refetchOnMount: false,
       retry: 1,
     }
   );
@@ -399,11 +399,11 @@ export const usePacotes = (onlyActive = true) => {
       }
     ),
     {
-      staleTime: 5 * 60 * 1000, // 5 min para pacotes aparecerem mais rápido
+      staleTime: TTL.LISTS,
       cacheTime: TTL.STATIC,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      refetchOnMount: true,
+      refetchOnMount: false,
       retry: 1,
     }
   );
