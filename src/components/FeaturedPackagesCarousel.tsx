@@ -66,7 +66,7 @@ const FeaturedPackagesCarousel = ({ packages }: FeaturedPackagesCarouselProps) =
             align: "start",
             loop: true,
           }}
-          plugins={[plugin.current]}
+          plugins={[plugin.current as any]}
           className="w-full max-w-6xl mx-auto"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
