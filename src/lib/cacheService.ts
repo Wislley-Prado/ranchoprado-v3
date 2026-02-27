@@ -298,15 +298,23 @@ export const cachedQuery = async <T>(
   // Check cache first
   const cached = getFromCache<T>(key);
   if (cached !== null) {
-    return cached;
+    // Don't return cached empty arrays - always re-fetch to ensure fresh data
+    const isEmptyArray = Array.isArray(cached) && cached.length === 0;
+    if (!isEmptyArray) {
+      return cached;
+    }
+    logCacheEvent('MISS', key, 'cached empty array, re-fetching');
   }
   
   // Fetch from Supabase
   recordSupabaseCall(key);
   const data = await fetchFn();
   
-  // Store in cache
-  setInCache(key, data, ttl);
+  // Only cache non-empty results for arrays
+  const isEmptyResult = Array.isArray(data) && data.length === 0;
+  if (!isEmptyResult) {
+    setInCache(key, data, ttl);
+  }
   
   return data;
 };
