@@ -37,7 +37,7 @@ const LazySection: React.FC<LazySectionProps> = ({
   }, [rootMargin]);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ minHeight: isVisible ? undefined : '200px' }}>
       {isVisible ? children : fallback}
     </div>
   );

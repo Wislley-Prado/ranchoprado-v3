@@ -51,6 +51,7 @@ const RanchCard = ({ ranch }: RanchCardProps) => {
               sizes="(max-width: 768px) 400px, 800px"
               alt={ranch.name}
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               width={400}
               height={192}
