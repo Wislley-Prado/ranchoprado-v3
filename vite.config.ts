@@ -78,10 +78,10 @@ export default defineConfig(({ mode }) => ({
             params: {
               overrides: {
                 cleanupNumericValues: false,
-                removeViewBox: false,
               },
             },
           },
+          'removeViewBox',
         ],
       },
     })
@@ -92,7 +92,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    cssMinify: 'lightningcss',
     rollupOptions: {
       output: {
         manualChunks: {
