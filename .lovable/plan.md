@@ -1,44 +1,37 @@
 
 
-## Diagnóstico corrigido (Supabase Pro - transformações funcionam)
+## Problema: Imagens demoram ~5s para aparecer e causam "pulo" na página
 
-### Problemas reais
+### Causa raiz
 
-**1. Rancho novo não aparece no celular**
-- Cache localStorage com TTL de **15 minutos** (`TTL.LISTS = 15 * 60 * 1000`)
-- `refetchOnMount: false` + `refetchOnWindowFocus: false` = dados nunca atualizam enquanto cache é válido
-- No celular, abas ficam em background mais tempo, mantendo o cache stale
-- Solução: reduzir `staleTime` para 5 minutos e habilitar `refetchOnMount: true`
+O `LazySection` com `fallback={<SectionSkeleton />}` renderiza um skeleton de **256px** (`h-64`). Quando a seção real monta (com 3+ cards de ~500px cada), a página pula. Além disso, o fluxo atual é:
 
-**2. Imagens demoram a renderizar no celular**
-- O `srcSet` com `getOptimizedUrl` está correto para o plano Pro
-- Porém `loading="lazy"` nos RanchCards dentro de um `LazySection` com `rootMargin="300px"` cria **double lazy**: a seção só monta quando está a 300px do viewport, e depois as imagens só carregam quando estão no viewport novamente
-- Resultado: as imagens começam a baixar muito tarde no mobile
-- Solução: usar `loading="eager"` nos cards (já que o LazySection controla quando montar) e aumentar rootMargin para 500px
+1. Scroll chega perto → LazySection monta o componente
+2. React.lazy baixa o chunk JS → Suspense exibe skeleton
+3. Componente monta → React Query busca dados do Supabase (mesmo com cache, leva 100-300ms)
+4. Dados chegam → Imagens começam a baixar (~2-5s no celular)
 
-**3. LazySection atrasa a seção de Ranchos**
-- No mobile, há muitas seções antes (Hero, Anúncios, Dam, Lunar, Weather, Anúncios meio) que empurram Ranchos para longe
-- `rootMargin="300px"` pode não ser suficiente para iniciar o carregamento antes do scroll chegar
+São **4 etapas sequenciais** antes da imagem aparecer.
 
-### Plano de correção
+### Solução: Remover LazySection dos Ranchos e Pacotes
 
-#### 1. Reduzir cache e habilitar refetch (`src/hooks/useOptimizedData.ts`)
-- `useRanchos`: mudar `staleTime` de `TTL.LISTS` (15min) para `5 * 60 * 1000` (5min)
-- Mudar `refetchOnMount: false` para `refetchOnMount: true`
-- Manter `refetchOnWindowFocus: false` para não gastar egress
-
-#### 2. Remover double-lazy do RanchCard (`src/components/RanchCard.tsx`)
-- Mudar `loading="lazy"` para `loading="eager"` na imagem (o LazySection já controla quando o componente monta)
-- Manter `srcSet` e `getOptimizedUrl` (funciona no Pro)
-
-#### 3. Aumentar rootMargin do Ranchos (`src/pages/Index.tsx`)
-- Mudar `rootMargin="300px"` para `rootMargin="600px"` na LazySection de RanchosSection para que comece a carregar mais cedo no scroll
+Essas são seções **críticas para o negócio** - o usuário quer vê-las imediatamente. O LazySection fazia sentido para reduzir DOM inicial, mas está prejudicando a experiência.
 
 ### Arquivos a editar
 
-| Arquivo | Mudança |
-|---------|---------|
-| `src/hooks/useOptimizedData.ts` | staleTime 5min, refetchOnMount true no useRanchos |
-| `src/components/RanchCard.tsx` | `loading="eager"` na img |
-| `src/pages/Index.tsx` | rootMargin="600px" na LazySection de Ranchos |
+**1. `src/pages/Index.tsx`**
+- Remover `LazySection` wrapper de `RanchosSection` e `PackagesSection`
+- Manter apenas o `Suspense` com fallback
+- Isso permite que o chunk JS e os dados comecem a carregar **imediatamente** ao montar a página, não apenas quando o usuário scrolla
+
+**2. `src/components/LazySection.tsx`**
+- Adicionar `min-height` no div do fallback para evitar layout shift nas seções que continuam lazy
+
+**3. `src/components/RanchCard.tsx`**
+- Adicionar `fetchpriority="high"` na imagem para que o browser priorize o download
+
+### Resultado esperado
+- Ranchos e Pacotes já estarão com dados carregados quando o usuário scrollar
+- Imagens começam a baixar antes, aparecendo instantaneamente ao scrollar
+- Sem "pulo" na página
 
