@@ -24,6 +24,8 @@ const BlogCard = ({ post }: BlogCardProps) => {
       <div className="aspect-video overflow-hidden rounded-t-lg">
         <img 
           src={getOptimizedUrl(post.image, 800)} 
+          srcSet={`${getOptimizedUrl(post.image, 400)} 400w, ${getOptimizedUrl(post.image, 800)} 800w`}
+          sizes="(max-width: 768px) 400px, 800px"
           alt={post.title}
           loading="lazy"
           decoding="async"

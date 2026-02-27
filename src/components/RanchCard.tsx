@@ -47,6 +47,8 @@ const RanchCard = ({ ranch }: RanchCardProps) => {
           {ranch.images && ranch.images.length > 0 ? (
             <img 
               src={getOptimizedUrl(ranch.images[0], 800)} 
+              srcSet={`${getOptimizedUrl(ranch.images[0], 400)} 400w, ${getOptimizedUrl(ranch.images[0], 800)} 800w`}
+              sizes="(max-width: 768px) 400px, 800px"
               alt={ranch.name}
               loading="lazy"
               decoding="async"

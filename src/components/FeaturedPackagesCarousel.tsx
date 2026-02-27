@@ -87,6 +87,8 @@ const FeaturedPackagesCarousel = ({ packages }: FeaturedPackagesCarouselProps) =
                     <div className="relative h-56 overflow-hidden">
                       <img
                         src={getOptimizedUrl(pkg.image, 800)}
+                        srcSet={`${getOptimizedUrl(pkg.image, 400)} 400w, ${getOptimizedUrl(pkg.image, 800)} 800w`}
+                        sizes="(max-width: 768px) 400px, 800px"
                         alt={pkg.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         loading="lazy"
