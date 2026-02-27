@@ -6,12 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { PWALifecycle } from "@/components/PWALifecycle";
-import { DynamicFavicon } from "@/components/DynamicFavicon";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import CookieConsent from "@/components/CookieConsent";
-import TrackingScripts from "@/components/TrackingScripts";
-import PageViewTracker from "@/components/PageViewTracker";
+
+// Non-critical components - lazy loaded to reduce FCP
+const PWALifecycle = React.lazy(() => import("@/components/PWALifecycle").then(m => ({ default: m.PWALifecycle })));
+const DynamicFavicon = React.lazy(() => import("@/components/DynamicFavicon").then(m => ({ default: m.DynamicFavicon })));
+const CookieConsent = React.lazy(() => import("@/components/CookieConsent"));
+const TrackingScripts = React.lazy(() => import("@/components/TrackingScripts"));
+const PageViewTracker = React.lazy(() => import("@/components/PageViewTracker"));
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PrivateRoute } from "@/components/admin/PrivateRoute";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -90,13 +92,13 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <PWALifecycle />
-            <DynamicFavicon />
+            <Suspense fallback={null}><PWALifecycle /></Suspense>
+            <Suspense fallback={null}><DynamicFavicon /></Suspense>
             <BrowserRouter>
             <ScrollToTop />
-            <PageViewTracker />
+            <Suspense fallback={null}><PageViewTracker /></Suspense>
             <AuthProvider>
-              <TrackingScripts />
+              <Suspense fallback={null}><TrackingScripts /></Suspense>
               <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public Routes */}
@@ -158,7 +160,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
-              <CookieConsent />
+              <Suspense fallback={null}><CookieConsent /></Suspense>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
