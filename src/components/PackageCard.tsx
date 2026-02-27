@@ -53,7 +53,6 @@ const PackageCard = ({ pkg }: PackageCardProps) => {
             alt={pkg.title}
             className="w-full h-full object-cover"
             loading="eager"
-            fetchPriority="high"
             decoding="async"
             width={400}
             height={192}
