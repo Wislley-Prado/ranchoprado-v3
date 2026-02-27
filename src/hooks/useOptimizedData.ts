@@ -399,11 +399,11 @@ export const usePacotes = (onlyActive = true) => {
       }
     ),
     {
-      staleTime: TTL.LISTS,
+      staleTime: 5 * 60 * 1000, // 5 min para pacotes aparecerem mais rápido
       cacheTime: TTL.STATIC,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      refetchOnMount: false,
+      refetchOnMount: true,
       retry: 1,
     }
   );
