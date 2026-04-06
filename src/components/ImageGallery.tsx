@@ -62,7 +62,7 @@ export const ImageGallery = ({ images, title }: ImageGalleryProps) => {
               alt={images[selectedIndex]?.alt_text || title || 'Imagem'}
               className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
               loading="eager"
-              fetchPriority="high"
+              /* fetchpriority handled natively by browser for eager images */
               onError={(e) => {
                 const original = getOriginalUrl(images[selectedIndex]?.url);
                 if (e.currentTarget.src !== original) {
