@@ -1,16 +1,24 @@
 /**
- * Otimiza URLs de imagens do Supabase Storage.
- * 
- * NOTA: Transformações de imagem (/render/image/) requerem plano Pro do Supabase.
- * No plano gratuito, retornamos a URL original para evitar 404.
- * Se o projeto migrar para Pro, basta descomentar a transformação abaixo.
+ * Otimiza URLs de imagens do Supabase Storage usando o endpoint de transformação.
+ * O Supabase Pro usa /render/image/ ao invés de /object/ para servir imagens transformadas.
  */
-export const getOptimizedUrl = (url: string, _width?: number, _quality?: number): string => {
+export const getOptimizedUrl = (url: string, width: number, quality = 80): string => {
   if (!url) return url;
   
-  // Retorna a URL original sem transformação para garantir que imagens sempre carreguem.
-  // Supabase image transformations (/render/image/) requerem plano Pro.
-  return url;
+  // Só otimiza URLs do Supabase Storage
+  if (!url.includes('supabase.co/storage')) return url;
+  
+  // Avoid adding duplicate params
+  if (url.includes('width=') || url.includes('quality=')) return url;
+  
+  // Supabase image transformations require changing /object/ to /render/image/
+  const transformedUrl = url.replace(
+    '/storage/v1/object/',
+    '/storage/v1/render/image/'
+  );
+  
+  const separator = transformedUrl.includes('?') ? '&' : '?';
+  return `${transformedUrl}${separator}width=${width}&quality=${quality}`;
 };
 
 /**
@@ -18,6 +26,5 @@ export const getOptimizedUrl = (url: string, _width?: number, _quality?: number)
  */
 export const getOriginalUrl = (url: string): string => {
   if (!url) return url;
-  // Reverte /render/image/ para /object/ se necessário
   return url.replace('/storage/v1/render/image/', '/storage/v1/object/');
 };
