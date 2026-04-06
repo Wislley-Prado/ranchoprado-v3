@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +13,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { invalidateCacheByPrefix } from '@/lib/cacheService';
 
 interface DeletePacoteDialogProps {
   open: boolean;
@@ -27,6 +29,7 @@ export const DeletePacoteDialog = ({
   onSuccess,
 }: DeletePacoteDialogProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleDelete = async () => {
     if (!pacote) return;
@@ -70,6 +73,9 @@ export const DeletePacoteDialog = ({
 
       if (pacoteError) throw pacoteError;
 
+      invalidateCacheByPrefix('pacotes');
+      queryClient.invalidateQueries({ queryKey: ['admin-pacotes'] });
+      queryClient.invalidateQueries({ queryKey: ['pacotes'] });
       toast.success('Pacote excluído com sucesso!');
       onSuccess();
       onOpenChange(false);
