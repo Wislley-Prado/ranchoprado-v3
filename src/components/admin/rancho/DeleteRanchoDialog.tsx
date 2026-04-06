@@ -11,6 +11,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { invalidateCacheByPrefix } from '@/lib/cacheService';
 
 interface RanchoImage {
   url: string;
@@ -64,6 +65,7 @@ export const DeleteRanchoDialog = ({
 
       if (deleteError) throw deleteError;
 
+      invalidateCacheByPrefix('ranchos');
       toast.success('Rancho excluído com sucesso!');
       onSuccess();
       onOpenChange(false);
