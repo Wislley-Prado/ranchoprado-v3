@@ -1,11 +1,12 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft } from 'lucide-react';
 import { PacoteForm } from '@/components/admin/pacote/PacoteForm';
 import { supabase } from '@/integrations/supabase/client';
+import { invalidateCacheByPrefix } from '@/lib/cacheService';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,6 +19,7 @@ import {
 const PacoteEditar = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: pacote, isLoading, error } = useQuery({
     queryKey: ['pacote', id],
@@ -34,6 +36,10 @@ const PacoteEditar = () => {
   });
 
   const handleSuccess = () => {
+    invalidateCacheByPrefix('pacotes');
+    queryClient.invalidateQueries({ queryKey: ['admin-pacotes'] });
+    queryClient.invalidateQueries({ queryKey: ['pacotes'] });
+    queryClient.invalidateQueries({ queryKey: ['pacote', id] });
     navigate('/admin/pacotes');
   };
 
