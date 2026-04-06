@@ -7,6 +7,7 @@ import { RanchoForm } from '@/components/admin/rancho/RanchoForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { invalidateCacheByPrefix } from '@/lib/cacheService';
 
 const RanchoEditar = () => {
   const navigate = useNavigate();
@@ -33,8 +34,10 @@ const RanchoEditar = () => {
 
   const handleSuccess = () => {
     toast.success('Rancho atualizado com sucesso!');
+    invalidateCacheByPrefix('ranchos');
     queryClient.invalidateQueries({ queryKey: ['rancho', id] });
     queryClient.invalidateQueries({ queryKey: ['ranchos'] });
+    queryClient.invalidateQueries({ queryKey: ['admin-ranchos'] });
     navigate('/admin/ranchos');
   };
 
