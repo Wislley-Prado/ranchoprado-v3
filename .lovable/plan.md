@@ -1,20 +1,24 @@
 
 
-## Problema: Imagens borradas no PC
+## Diagnóstico: Imagens dos ranchos não atualizam no admin
 
-As imagens estão sendo servidas com `width=400` via `getOptimizedUrl`. No celular, cards são ~350px de largura, então 400px é suficiente. No PC, os cards têm ~450-500px de largura, e com telas Retina (2x pixel ratio), precisam de pelo menos 800px para ficarem nítidas.
+### Causa raiz encontrada
 
-## Correção
+O problema é de **cache**, tanto no React Query quanto no localStorage.
 
-Aumentar a largura de otimização nos componentes de card para 800px (suficiente para desktop Retina) e manter thumbnails menores onde apropriado:
+1. **Query keys desalinhadas**: A página admin de ranchos (`Ranchos.tsx`) usa `queryKey: ['admin-ranchos']`, mas quando você salva um rancho no `RanchoEditar.tsx`, o `handleSuccess` invalida apenas `['rancho', id]` e `['ranchos']` — nunca invalida `['admin-ranchos']`. Resultado: ao voltar para a listagem, o React Query serve os dados antigos.
 
-| Arquivo | Mudança |
-|---------|---------|
-| `src/components/RanchCard.tsx` | `getOptimizedUrl(url, 400)` → `getOptimizedUrl(url, 800)` |
-| `src/components/PackageCard.tsx` | `getOptimizedUrl(url, 400)` → `getOptimizedUrl(url, 800)` |
-| `src/components/BlogCard.tsx` | `getOptimizedUrl(url, 400)` → `getOptimizedUrl(url, 800)` |
-| `src/components/FeaturedPackagesCarousel.tsx` | `getOptimizedUrl(url, 400)` → `getOptimizedUrl(url, 800)` |
-| `src/components/AnunciosSection.tsx` | Manter 800 (já está correto) |
+2. **Cache localStorage persistente**: O `cachedQuery` no `useOptimizedData` salva dados no localStorage com TTL de 15 minutos (`TTL.LISTS`). Mesmo que o React Query seja invalidado, o localStorage pode servir dados velhos na próxima navegação.
 
-Isso dobra a resolução servida, mantendo a otimização (800px com quality=80 é ~60-70% menor que o original full-size).
+3. **`refetchOnMount: false`** nos hooks públicos: Se o admin navega para a página pública para verificar, os dados também ficam estáticos.
+
+### Plano de correção
+
+| # | Arquivo | Ação |
+|---|---------|------|
+| 1 | `src/pages/admin/RanchoEditar.tsx` | Adicionar invalidação de `['admin-ranchos']` + limpar cache localStorage com `invalidateCacheByPrefix('ranchos')` |
+| 2 | `src/pages/admin/Ranchos.tsx` | Mesma coisa no `refetch` — garantir que ao deletar um rancho, o cache localStorage também seja limpo |
+| 3 | `src/components/admin/rancho/DeleteRanchoDialog.tsx` | Verificar se `onSuccess` também limpa cache localStorage |
+
+A correção é simples: ao salvar/deletar um rancho no admin, invalidar **todas** as query keys relacionadas (`admin-ranchos`, `ranchos`, `rancho`) E limpar o cache do localStorage para garantir dados frescos.
 
