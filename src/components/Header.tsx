@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calendar, Fish } from 'lucide-react';
+import { Menu, X, Calendar } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSiteSettings } from '@/hooks/useOptimizedData';
 
@@ -43,8 +43,12 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Fish className="h-8 w-8 text-white animate-float" />
+          <Link to="/" className="flex items-center space-x-3">
+            <img
+              src="/logo-rancho-prado.png"
+              alt="Rancho Prado"
+              className="h-14 w-14 object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300"
+            />
             <div className="text-white">
               <h1 className="text-2xl font-bold tracking-tight">Rancho Prado</h1>
               <p className="text-xs text-sand-beige font-medium">Rio São Francisco</p>
