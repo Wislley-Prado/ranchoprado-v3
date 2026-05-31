@@ -44,10 +44,10 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Fish className="h-8 w-8 text-white" />
+            <Fish className="h-8 w-8 text-white animate-float" />
             <div className="text-white">
-              <h1 className="text-2xl font-bold">PradoAqui</h1>
-              <p className="text-xs text-blue-200">Rio São Francisco</p>
+              <h1 className="text-2xl font-bold tracking-tight">Rancho Prado</h1>
+              <p className="text-xs text-sand-beige font-medium">Rio São Francisco</p>
             </div>
           </Link>
 
@@ -57,7 +57,7 @@ const Header = () => {
               <button
                 key={item.name}
                 onClick={() => handleNavClick(item.href, item.hash)}
-                className="text-white hover:text-sand-beige transition-colors duration-200 bg-transparent border-none cursor-pointer"
+                className="text-white hover:text-sand-beige font-medium transition-colors duration-200 bg-transparent border-none cursor-pointer"
               >
                 {item.name}
               </button>
@@ -67,9 +67,8 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
-              variant="outline"
               size="sm"
-              className="bg-transparent border-white text-white hover:bg-white hover:text-rio-blue"
+              className="bg-sunset-orange text-premium-graphite font-bold border-none hover:bg-opacity-90 shadow-md transition-all duration-300"
               onClick={() => {
                 const link = settings?.reserva_button_link || 'https://wa.me/5538988320108';
                 window.open(link, '_blank', 'noopener,noreferrer');
@@ -101,16 +100,15 @@ const Header = () => {
                 <button
                   key={item.name}
                   onClick={() => handleNavClick(item.href, item.hash)}
-                  className="text-white hover:text-sand-beige transition-colors duration-200 py-2 bg-transparent border-none cursor-pointer text-left"
+                  className="text-white hover:text-sand-beige transition-colors duration-200 py-2 bg-transparent border-none cursor-pointer text-left font-medium"
                 >
                   {item.name}
                 </button>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
                 <Button
-                  variant="outline"
                   size="sm"
-                  className="bg-transparent border-white text-white hover:bg-white hover:text-rio-blue"
+                  className="bg-sunset-orange text-premium-graphite font-bold border-none hover:bg-opacity-90 shadow-md transition-all duration-300"
                   onClick={() => {
                     const link = settings?.reserva_button_link || 'https://wa.me/5538988320108';
                     window.open(link, '_blank', 'noopener,noreferrer');

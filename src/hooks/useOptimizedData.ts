@@ -1009,7 +1009,7 @@ export const useInvalidateCache = () => {
       invalidateCacheByPrefix('admin_blog_posts');
       queryClient.invalidateQueries(['admin-blog-posts-cached']);
     },
-invalidateAdminPacotes: () => {
+    invalidateAdminPacotes: () => {
       invalidateCacheByPrefix('admin_pacotes');
       queryClient.invalidateQueries(['admin-pacotes-cached']);
     },

@@ -63,34 +63,36 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Rio São Francisco Theme Colors
-				'rio-blue': '#219EBC',
-				'water-green': '#52B788',
-				'sand-beige': '#F4E4BC',
-				'sunset-orange': '#F77F00',
+				// Rancho Prado Premium Theme Colors
+				'rio-blue': '#12344D',      // Azul Rio Profundo
+				'water-green': '#355E3B',    // Verde Mata
+				'sand-beige': '#F5E6C8',     // Areia Natural
+				'sunset-orange': '#D4A017',   // Dourado Velho
+				'ice-white': '#FAFAFA',      // Branco Gelo
+				'premium-graphite': '#1D1D1D',// Grafite Premium
 				'river': {
-					50: '#f0f9ff',
-					100: '#e0f2fe',
-					200: '#bae6fd',
-					300: '#7dd3fc',
-					400: '#38bdf8',
-					500: '#219EBC',
-					600: '#0284c7',
-					700: '#0369a1',
-					800: '#075985',
-					900: '#0c4a6e',
+					50: '#f0f7fc',
+					100: '#e0eff9',
+					200: '#bae0f3',
+					300: '#7dc2e8',
+					400: '#38a0d9',
+					500: '#12344D', // Azul Rio Profundo
+					600: '#0e2b40',
+					700: '#0b2132',
+					800: '#071824',
+					900: '#040e16',
 				},
 				'nature': {
-					50: '#f0fdf4',
-					100: '#dcfce7',
-					200: '#bbf7d0',
-					300: '#86efac',
-					400: '#52B788',
-					500: '#22c55e',
-					600: '#16a34a',
-					700: '#15803d',
-					800: '#166534',
-					900: '#14532d',
+					50: '#f2f8f3',
+					100: '#e2f0e4',
+					200: '#cbe2ce',
+					300: '#a7cdab',
+					400: '#7bb081',
+					500: '#355E3B', // Verde Mata
+					600: '#2b4d30',
+					700: '#223c26',
+					800: '#192b1b',
+					900: '#101b11',
 				}
 			},
 			borderRadius: {
@@ -150,8 +152,8 @@ export default {
 				'fade-in': 'fade-in 0.6s ease-out',
 			},
 			backgroundImage: {
-				'river-gradient': 'linear-gradient(135deg, #219EBC 0%, #52B788 100%)',
-				'sunset-gradient': 'linear-gradient(135deg, #F77F00 0%, #219EBC 100%)',
+				'river-gradient': 'linear-gradient(135deg, #12344D 0%, #355E3B 100%)',
+				'sunset-gradient': 'linear-gradient(135deg, #D4A017 0%, #12344D 100%)',
 			}
 		}
 	},

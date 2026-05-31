@@ -90,4 +90,35 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React runtime
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Charts (recharts + dependencies)
+          'vendor-charts': ['recharts'],
+          // PDF & canvas export
+          'vendor-pdf': ['jspdf', 'jspdf-autotable', 'html2canvas'],
+          // Supabase client
+          'vendor-supabase': ['@supabase/supabase-js'],
+          // React Query
+          'vendor-query': ['@tanstack/react-query'],
+          // UI primitives (Radix)
+          'vendor-radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-select',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-switch',
+          ],
+        },
+      },
+    },
+  },
 }));
