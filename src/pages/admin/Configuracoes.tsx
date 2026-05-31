@@ -30,7 +30,7 @@ const Configuracoes = () => {
     defluencia: '',
     data: new Date().toLocaleDateString('pt-BR'),
   });
-  const [brandImages, setBrandImages] = useState({ favicon_url: '', og_image_url: '', pwa_icon_url: '' });
+  const [brandImages, setBrandImages] = useState({ favicon_url: '', og_image_url: '', pwa_icon_url: '', logo_url: '' });
   const [settings, setSettings] = useState({
     facebook_pixel: '',
     google_analytics: '',
@@ -73,6 +73,7 @@ const Configuracoes = () => {
           favicon_url: (data as any).favicon_url || '',
           og_image_url: (data as any).og_image_url || '',
           pwa_icon_url: (data as any).pwa_icon_url || '',
+          logo_url: (data as any).logo_url || '',
         });
         setSettings({
           facebook_pixel: data.facebook_pixel || '',
@@ -256,6 +257,7 @@ const Configuracoes = () => {
           faviconUrl={brandImages.favicon_url}
           ogImageUrl={brandImages.og_image_url}
           pwaIconUrl={brandImages.pwa_icon_url}
+          logoUrl={brandImages.logo_url}
           onUpdate={fetchSettings}
         />
 

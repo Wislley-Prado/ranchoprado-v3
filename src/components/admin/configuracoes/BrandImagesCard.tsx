@@ -13,6 +13,7 @@ interface BrandImagesCardProps {
   faviconUrl: string;
   ogImageUrl: string;
   pwaIconUrl: string;
+  logoUrl: string;
   onUpdate: () => void;
 }
 
@@ -153,7 +154,7 @@ const ImageUploader = ({ label, description, currentUrl, bucket, path, field, ma
   );
 };
 
-export const BrandImagesCard = ({ faviconUrl, ogImageUrl, pwaIconUrl, onUpdate }: BrandImagesCardProps) => {
+export const BrandImagesCard = ({ faviconUrl, ogImageUrl, pwaIconUrl, logoUrl, onUpdate }: BrandImagesCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -162,10 +163,22 @@ export const BrandImagesCard = ({ faviconUrl, ogImageUrl, pwaIconUrl, onUpdate }
           Imagens do Site
         </CardTitle>
         <CardDescription>
-          Favicon, imagem de compartilhamento (OG Image) e ícones PWA
+          Logo do header, favicon, imagem de compartilhamento (OG Image) e ícones PWA
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <ImageUploader
+          label="Logo do Header"
+          description="Logo exibida no cabeçalho do site (PNG com fundo transparente, recomendado: 512x512px)"
+          currentUrl={logoUrl}
+          bucket="configuracoes"
+          path="logo-header"
+          field="logo_url"
+          maxWidth={512}
+          maxHeight={512}
+          onUpdate={onUpdate}
+          previewSize="w-16 h-16"
+        />
         <ImageUploader
           label="Favicon"
           description="Ícone que aparece na aba do navegador (recomendado: 64x64px, PNG)"

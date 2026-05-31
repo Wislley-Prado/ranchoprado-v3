@@ -45,7 +45,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <img
-              src="/logo-rancho-prado.png"
+              src={(settings as any)?.logo_url || '/logo-rancho-prado.png'}
               alt="Rancho Prado"
               className="h-14 w-14 object-contain drop-shadow-lg hover:scale-105 transition-transform duration-300"
             />
