@@ -994,6 +994,7 @@ export type Database = {
           google_tag_manager: string | null
           id: string
           instagram_url: string | null
+          logo_url: string | null
           og_image_url: string | null
           pwa_icon_url: string | null
           reserva_button_link: string | null
@@ -1029,6 +1030,7 @@ export type Database = {
           google_tag_manager?: string | null
           id?: string
           instagram_url?: string | null
+          logo_url?: string | null
           og_image_url?: string | null
           pwa_icon_url?: string | null
           reserva_button_link?: string | null
@@ -1064,6 +1066,7 @@ export type Database = {
           google_tag_manager?: string | null
           id?: string
           instagram_url?: string | null
+          logo_url?: string | null
           og_image_url?: string | null
           pwa_icon_url?: string | null
           reserva_button_link?: string | null
@@ -1251,6 +1254,7 @@ export type Database = {
           favicon_url: string | null
           id: string | null
           instagram_url: string | null
+          logo_url: string | null
           og_image_url: string | null
           pwa_icon_url: string | null
           reserva_button_link: string | null
@@ -1280,6 +1284,7 @@ export type Database = {
           favicon_url?: string | null
           id?: string | null
           instagram_url?: string | null
+          logo_url?: string | null
           og_image_url?: string | null
           pwa_icon_url?: string | null
           reserva_button_link?: string | null
@@ -1309,6 +1314,7 @@ export type Database = {
           favicon_url?: string | null
           id?: string | null
           instagram_url?: string | null
+          logo_url?: string | null
           og_image_url?: string | null
           pwa_icon_url?: string | null
           reserva_button_link?: string | null
