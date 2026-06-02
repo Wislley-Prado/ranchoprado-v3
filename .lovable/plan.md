@@ -1,8 +1,6 @@
+# Diagnóstico: Imagens dos ranchos não atualizam no admin
 
-
-## Diagnóstico: Imagens dos ranchos não atualizam no admin
-
-### Causa raiz encontrada
+## Causa raiz encontrada
 
 O problema é de **cache**, tanto no React Query quanto no localStorage.
 
@@ -12,13 +10,12 @@ O problema é de **cache**, tanto no React Query quanto no localStorage.
 
 3. **`refetchOnMount: false`** nos hooks públicos: Se o admin navega para a página pública para verificar, os dados também ficam estáticos.
 
-### Plano de correção
+## Plano de correção
 
 | # | Arquivo | Ação |
-|---|---------|------|
+| - | ------- | ---- |
 | 1 | `src/pages/admin/RanchoEditar.tsx` | Adicionar invalidação de `['admin-ranchos']` + limpar cache localStorage com `invalidateCacheByPrefix('ranchos')` |
 | 2 | `src/pages/admin/Ranchos.tsx` | Mesma coisa no `refetch` — garantir que ao deletar um rancho, o cache localStorage também seja limpo |
 | 3 | `src/components/admin/rancho/DeleteRanchoDialog.tsx` | Verificar se `onSuccess` também limpa cache localStorage |
 
 A correção é simples: ao salvar/deletar um rancho no admin, invalidar **todas** as query keys relacionadas (`admin-ranchos`, `ranchos`, `rancho`) E limpar o cache do localStorage para garantir dados frescos.
-
