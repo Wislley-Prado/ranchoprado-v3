@@ -160,21 +160,15 @@ const Configuracoes = () => {
   const handleRefreshDamData = async () => {
     setRefreshing(true);
     try {
-      const response = await fetch('https://zeqloqlhnbdeivnyghkx.supabase.co/functions/v1/dam-data-proxy', {
+      const { data, error } = await supabase.functions.invoke('dam-data-proxy', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao atualizar dados');
+      if (error) {
+        throw new Error(error.message || 'Erro ao atualizar dados');
       }
 
-      const data = await response.json();
-      
-      if (data.saved_to_db) {
+      if (data?.saved_to_db) {
         toast.success('Dados da represa atualizados com sucesso!');
         setLastUpdate(new Date().toISOString());
       } else {

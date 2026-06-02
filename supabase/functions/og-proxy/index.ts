@@ -17,8 +17,8 @@ serve(async (req) => {
     const baseUrl = url.searchParams.get("baseUrl") || "https://pradoaqui.com.br";
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "https://zeqloqlhnbdeivnyghkx.supabase.co";
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcWxvcWxobmJkZWl2bnlnaGt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNTAxNjcsImV4cCI6MjA3MzcyNjE2N30.j96GObK0f5AUgc5O38n6gum3OU4u_5OFyxRaLj76GwY";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "https://elteoovghevwrefykkyh.supabase.co";
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsdGVvb3ZnaGV2d3JlZnlra3loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxOTMwODMsImV4cCI6MjA5NTc2OTA4M30.rlNr3KOMAH-QlwUwsbNQZYiW6W66HMiUnSG1ZuZpvb0";
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
