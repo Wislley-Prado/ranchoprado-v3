@@ -21,6 +21,17 @@ export const compressImage = async (
 ): Promise<File> => {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
+  // Não comprime SVGs ou ICOs (preserva qualidade vetorial e formato de ícone)
+  if (
+    file.type === 'image/svg+xml' || 
+    file.type === 'image/x-icon' || 
+    file.name.endsWith('.svg') || 
+    file.name.endsWith('.ico')
+  ) {
+    console.log(`Skipping compression for vector/icon file: ${file.name}`);
+    return file;
+  }
+
   // Se a imagem já é pequena o suficiente, retorna o arquivo original
   const fileSizeMB = file.size / 1024 / 1024;
   if (fileSizeMB < (opts.maxSizeMB || 1) * 0.8) {

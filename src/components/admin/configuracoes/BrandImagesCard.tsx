@@ -49,11 +49,24 @@ const ImageUploader = ({ label, description, currentUrl, bucket, path, field, ma
       const compressed = await compressImage(file, { maxWidth, maxHeight, quality: 0.9 });
       
       const ext = file.name.split('.').pop() || 'png';
-      const fileName = `${path}.${ext}`;
+      const fileName = `${path}-${Date.now()}.${ext}`;
+
+      // Remover arquivo antigo se existir para evitar acumular lixo no storage
+      if (currentUrl) {
+        try {
+          const urlWithoutParams = currentUrl.split('?')[0];
+          const oldFileName = urlWithoutParams.substring(urlWithoutParams.lastIndexOf('/') + 1);
+          if (oldFileName && !oldFileName.includes('placeholder')) {
+            await supabase.storage.from(bucket).remove([oldFileName]);
+          }
+        } catch (err) {
+          console.warn('Erro ao remover arquivo antigo do storage:', err);
+        }
+      }
 
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(fileName, compressed, { upsert: true, cacheControl: '3600' });
+        .upload(fileName, compressed, { cacheControl: '3600' });
 
       if (uploadError) throw uploadError;
 
@@ -81,6 +94,19 @@ const ImageUploader = ({ label, description, currentUrl, bucket, path, field, ma
   const handleRemove = async () => {
     setRemoving(true);
     try {
+      // Deletar arquivo físico do storage
+      if (currentUrl) {
+        try {
+          const urlWithoutParams = currentUrl.split('?')[0];
+          const oldFileName = urlWithoutParams.substring(urlWithoutParams.lastIndexOf('/') + 1);
+          if (oldFileName && !oldFileName.includes('placeholder')) {
+            await supabase.storage.from(bucket).remove([oldFileName]);
+          }
+        } catch (err) {
+          console.warn('Erro ao remover arquivo do storage durante exclusão:', err);
+        }
+      }
+
       const { error } = await supabase
         .from('site_settings')
         .update({ [field]: null } as any)
