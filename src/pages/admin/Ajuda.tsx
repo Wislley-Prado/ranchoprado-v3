@@ -66,13 +66,13 @@ const Ajuda = () => {
     {
       id: 'visao-geral',
       icon: Globe,
-      title: 'Visão Geral do PradoAqui',
+      title: 'Visão Geral do Rancho Prado',
       color: 'text-blue-600',
       category: 'Sobre o Sistema',
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            O PradoAqui é uma plataforma completa de turismo de pesca esportiva no Rio São Francisco, 
+            O Rancho Prado é uma plataforma completa de turismo de pesca esportiva no Rio São Francisco, 
             região de Três Marias/MG, oferecendo ranchos para hospedagem, pacotes de pescaria e 
             informações em tempo real para pescadores.
           </p>
@@ -109,7 +109,7 @@ const Ajuda = () => {
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li><strong>Frontend:</strong> React + TypeScript + Tailwind CSS</li>
               <li><strong>Backend:</strong> Supabase (PostgreSQL + Edge Functions)</li>
-              <li><strong>Hospedagem:</strong> Hostinger (domínio pradoaqui.com.br)</li>
+              <li><strong>Hospedagem:</strong> Hostinger (domínio ranchoprado.com.br)</li>
               <li><strong>Analytics:</strong> Google Analytics + Facebook Pixel</li>
               <li><strong>PWA:</strong> Funciona como aplicativo instalável</li>
             </ul>
@@ -522,7 +522,7 @@ const Ajuda = () => {
               <li>Botões de compartilhamento em cada post</li>
               <li>Facebook, WhatsApp, Twitter/X, LinkedIn</li>
               <li>Instagram: copia link para o usuário colar</li>
-              <li>URLs geradas com domínio pradoaqui.com.br</li>
+              <li>URLs geradas com domínio ranchoprado.com.br</li>
             </ul>
           </div>
 
@@ -1081,7 +1081,7 @@ const Ajuda = () => {
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li>Imagem destacada aparece no preview do link</li>
               <li>Título e descrição otimizados para cada rede</li>
-              <li>URLs usam domínio pradoaqui.com.br</li>
+              <li>URLs usam domínio ranchoprado.com.br</li>
               <li>Edge Function proxy garante preview correto</li>
             </ul>
           </div>
@@ -1110,7 +1110,7 @@ const Ajuda = () => {
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            O PradoAqui funciona como Progressive Web App, permitindo instalação 
+            O Rancho Prado funciona como Progressive Web App, permitindo instalação 
             no celular como um aplicativo nativo.
           </p>
           
@@ -1357,7 +1357,7 @@ const Ajuda = () => {
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li><strong>Frontend:</strong> Lovable (desenvolvimento) → Hostinger (produção)</li>
               <li><strong>Backend:</strong> Supabase (PostgreSQL + Edge Functions)</li>
-              <li><strong>Domínio:</strong> pradoaqui.com.br (Hostinger)</li>
+              <li><strong>Domínio:</strong> ranchoprado.com.br (Hostinger)</li>
               <li><strong>SSL:</strong> HTTPS configurado automaticamente</li>
             </ul>
           </div>
@@ -1412,7 +1412,7 @@ const Ajuda = () => {
       <div>
         <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
           <BookOpen className="w-8 h-8 text-primary" />
-          Manual Completo do PradoAqui
+          Manual Completo do Rancho Prado
         </h1>
         <p className="text-muted-foreground mt-2">
           Documentação completa de todas as funcionalidades do site e painel administrativo

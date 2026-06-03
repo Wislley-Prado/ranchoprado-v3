@@ -19,8 +19,8 @@ const WhatsAppButton = () => {
   const raw = siteSettings as any;
   const settings = {
     whatsapp_numero: raw?.whatsapp_numero || "5531999999999",
-    whatsapp_titulo: raw?.whatsapp_titulo || "PradoAqui - Atendimento",
-    whatsapp_mensagem_padrao: raw?.whatsapp_mensagem_padrao || "Olá! Gostaria de saber mais sobre os pacotes de pesca no PradoAqui.",
+    whatsapp_titulo: raw?.whatsapp_titulo || "Rancho Prado - Atendimento",
+    whatsapp_mensagem_padrao: raw?.whatsapp_mensagem_padrao || "Olá! Gostaria de saber mais sobre os pacotes de pesca no Rancho Prado.",
     whatsapp_saudacao: raw?.whatsapp_saudacao || "👋 Olá! Como podemos ajudar você hoje?",
     whatsapp_instrucao: raw?.whatsapp_instrucao || "Escolha uma opção abaixo ou digite sua mensagem:",
     whatsapp_horario: raw?.whatsapp_horario || "Seg-Dom: 6h às 22h",

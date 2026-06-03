@@ -45,13 +45,13 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>PradoAqui | Rio São Francisco ao Vivo - Pesca em Três Marias/MG</title>
-        <meta name="description" content="Sua experiência de pesca no Rio São Francisco começa aqui! Ranchos exclusivos, pacotes personalizados e estrutura completa em Três Marias/MG." />
-        <meta property="og:title" content="PradoAqui | Rio São Francisco ao Vivo" />
-        <meta property="og:description" content="Sua experiência de pesca no Rio São Francisco começa aqui! Ranchos exclusivos e pacotes personalizados em Três Marias/MG." />
+        <title>Rancho Prado | Rio São Francisco ao Vivo - Pesca em Três Marias/MG</title>
+        <meta name="description" content="Sua experiência de pesca no Rio São Francisco começa no Rancho Prado! Ranchos exclusivos, pacotes personalizados e estrutura completa em Três Marias/MG." />
+        <meta property="og:title" content="Rancho Prado | Rio São Francisco ao Vivo" />
+        <meta property="og:description" content="Sua experiência de pesca no Rio São Francisco começa no Rancho Prado! Ranchos exclusivos e pacotes personalizados em Três Marias/MG." />
         <meta property="og:image" content={ogImage} />
-        <meta property="og:url" content="https://pradoaqui.com" />
-        <meta name="twitter:title" content="PradoAqui | Rio São Francisco ao Vivo" />
+        <meta property="og:url" content="https://ranchoprado.com.br" />
+        <meta name="twitter:title" content="Rancho Prado | Rio São Francisco ao Vivo" />
         <meta name="twitter:image" content={ogImage} />
       </Helmet>
       <Header />

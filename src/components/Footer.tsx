@@ -35,7 +35,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2">
               <Fish className="h-8 w-8 text-rio-blue" />
               <div>
-                <h3 className="text-xl font-bold">PradoAqui</h3>
+                <h3 className="text-xl font-bold">Rancho Prado</h3>
                 <p className="text-sm text-gray-400">Rio São Francisco</p>
               </div>
             </div>
@@ -102,7 +102,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-rio-blue" />
-                <span className="text-gray-300">{settings?.email_contato || 'contato@pradoaqui.com.br'}</span>
+                <span className="text-gray-300">{settings?.email_contato || 'contato@ranchoprado.com.br'}</span>
               </div>
               <div className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 text-rio-blue mt-0.5" />
@@ -169,7 +169,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-400">
-              {settings?.copyright_text || '© 2025 PradoAqui. Todos os direitos reservados.'}
+              {settings?.copyright_text || '© 2026 Rancho Prado. Todos os direitos reservados.'}
             </div>
             <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
               <Link to="/politica-privacidade" className="text-gray-300 hover:text-rio-blue transition-colors">

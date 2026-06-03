@@ -20,7 +20,7 @@ export const InstallPrompt: React.FC<InstallPromptProps> = ({ onInstall }) => {
       if (success) {
         toast({
           title: "App Instalado!",
-          description: "PradoAqui foi instalado com sucesso no seu dispositivo.",
+          description: "Rancho Prado foi instalado com sucesso no seu dispositivo.",
         });
         setIsVisible(false);
       } else {
@@ -68,7 +68,7 @@ export const InstallPrompt: React.FC<InstallPromptProps> = ({ onInstall }) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <Download className="h-5 w-5" />
-                <h3 className="font-semibold text-sm">Instalar PradoAqui</h3>
+                <h3 className="font-semibold text-sm">Instalar Rancho Prado</h3>
               </div>
               <p className="text-sm text-primary-foreground/90 mb-3">
                 Instale o app para acesso rápido e experiência offline

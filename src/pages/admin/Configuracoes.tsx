@@ -547,7 +547,7 @@ const Configuracoes = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              Avatar do Autor (PradoAqui)
+              Avatar do Autor (Rancho Prado)
             </CardTitle>
             <CardDescription>
               Configure a imagem do avatar que aparece nos posts do blog
@@ -563,7 +563,7 @@ const Configuracoes = () => {
                 onChange={(e) => setSettings({ ...settings, autor_avatar_url: e.target.value })}
               />
               <p className="text-xs text-muted-foreground">
-                URL da imagem do avatar do PradoAqui (recomendado: 100x100px)
+                URL da imagem do avatar do Rancho Prado (recomendado: 100x100px)
               </p>
             </div>
             {settings.autor_avatar_url && (
@@ -603,7 +603,7 @@ const Configuracoes = () => {
                   </Label>
                   <Input
                     id="facebook_url"
-                    placeholder="https://facebook.com/pradoaqui"
+                    placeholder="https://facebook.com/ranchoprado"
                     value={settings.facebook_url}
                     onChange={(e) => setSettings({ ...settings, facebook_url: e.target.value })}
                   />
@@ -616,7 +616,7 @@ const Configuracoes = () => {
                   </Label>
                   <Input
                     id="instagram_url"
-                    placeholder="https://instagram.com/pradoaqui"
+                    placeholder="https://instagram.com/ranchoprado"
                     value={settings.instagram_url}
                     onChange={(e) => setSettings({ ...settings, instagram_url: e.target.value })}
                   />
@@ -629,7 +629,7 @@ const Configuracoes = () => {
                   </Label>
                   <Input
                     id="youtube_url"
-                    placeholder="https://youtube.com/@pradoaqui"
+                    placeholder="https://youtube.com/@ranchoprado"
                     value={settings.youtube_url}
                     onChange={(e) => setSettings({ ...settings, youtube_url: e.target.value })}
                   />
@@ -644,7 +644,7 @@ const Configuracoes = () => {
                   </Label>
                   <Input
                     id="tiktok_url"
-                    placeholder="https://tiktok.com/@pradoaqui"
+                    placeholder="https://tiktok.com/@ranchoprado"
                     value={settings.tiktok_url}
                     onChange={(e) => setSettings({ ...settings, tiktok_url: e.target.value })}
                   />
@@ -659,7 +659,7 @@ const Configuracoes = () => {
                   </Label>
                   <Input
                     id="twitter_url"
-                    placeholder="https://x.com/pradoaqui"
+                    placeholder="https://x.com/ranchoprado"
                     value={settings.twitter_url}
                     onChange={(e) => setSettings({ ...settings, twitter_url: e.target.value })}
                   />
@@ -695,7 +695,7 @@ const Configuracoes = () => {
                   <Input
                     id="email_contato"
                     type="email"
-                    placeholder="contato@pradoaqui.com.br"
+                    placeholder="contato@ranchoprado.com.br"
                     value={settings.email_contato}
                     onChange={(e) => setSettings({ ...settings, email_contato: e.target.value })}
                   />
@@ -733,7 +733,7 @@ const Configuracoes = () => {
                 </Label>
                 <Input
                   id="copyright_text"
-                  placeholder="© 2025 PradoAqui. Todos os direitos reservados."
+                  placeholder="© 2026 Rancho Prado. Todos os direitos reservados."
                   value={settings.copyright_text}
                   onChange={(e) => setSettings({ ...settings, copyright_text: e.target.value })}
                 />

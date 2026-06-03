@@ -42,7 +42,7 @@ const BlogSection = () => {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <BookOpen className="h-8 w-8 text-rio-blue" />
-            <h2 className="text-3xl font-bold text-gray-900">Blog PradoAqui</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Blog Rancho Prado</h2>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Fique por dentro das últimas novidades, dicas de pesca e informações sobre o Rio São Francisco
@@ -79,7 +79,7 @@ const BlogSection = () => {
                         id: post.id,
                         title: post.titulo,
                         excerpt: post.resumo || '',
-                        author: 'PradoAqui',
+                        author: 'Rancho Prado',
                         date: new Date(post.data_publicacao || post.created_at).toLocaleDateString('pt-BR', {
                           day: 'numeric',
                           month: 'short',

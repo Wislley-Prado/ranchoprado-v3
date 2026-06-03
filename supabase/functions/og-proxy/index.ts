@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const path = url.searchParams.get("path") || "";
-    const baseUrl = url.searchParams.get("baseUrl") || "https://pradoaqui.com.br";
+    const baseUrl = url.searchParams.get("baseUrl") || "https://ranchoprado.com.br";
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "https://elteoovghevwrefykkyh.supabase.co";
@@ -22,8 +22,8 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    let title = "PradoAqui | Rio São Francisco ao Vivo";
-    let description = "Sua experiência de pesca no Rio São Francisco começa aqui! Ranchos exclusivos e pacotes personalizados em Três Marias/MG.";
+    let title = "Rancho Prado | Rio São Francisco ao Vivo";
+    let description = "Sua experiência de pesca no Rio São Francisco começa no Rancho Prado! Ranchos exclusivos e pacotes personalizados em Três Marias/MG.";
     let image = `${baseUrl}/og-image.png`;
     let pageUrl = baseUrl;
 
@@ -41,7 +41,7 @@ serve(async (req) => {
         .single();
 
       if (post) {
-        title = `${post.titulo} | Blog PradoAqui`;
+        title = `${post.titulo} | Blog Rancho Prado`;
         description = post.resumo || post.titulo;
         image = post.imagem_destaque || `${baseUrl}/og-image.png`;
         pageUrl = `${baseUrl}/blog/${post.slug}`;
@@ -64,7 +64,7 @@ serve(async (req) => {
           .eq("principal", true)
           .limit(1);
 
-        title = `${rancho.nome} | Rancho em ${rancho.localizacao} - PradoAqui`;
+        title = `${rancho.nome} | Rancho em ${rancho.localizacao} - Rancho Prado`;
         description = rancho.descricao?.substring(0, 160) || `Rancho ${rancho.nome} em ${rancho.localizacao}`;
         image = imagens?.[0]?.url || `${baseUrl}/og-image.png`;
         pageUrl = `${baseUrl}/rancho/${rancho.slug}`;
@@ -87,7 +87,7 @@ serve(async (req) => {
           .eq("principal", true)
           .limit(1);
 
-        title = `${pacote.nome} | Pacote de Pesca - PradoAqui`;
+        title = `${pacote.nome} | Pacote de Pesca - Rancho Prado`;
         description = pacote.descricao?.substring(0, 160) || `Pacote ${pacote.nome}. ${pacote.duracao} para ${pacote.pessoas} pessoas.`;
         image = imagens?.[0]?.url || `${baseUrl}/og-image.png`;
         pageUrl = `${baseUrl}/pacote/${pacote.slug}`;
@@ -111,7 +111,7 @@ serve(async (req) => {
   <meta property="og:image" content="${image}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:site_name" content="PradoAqui">
+  <meta property="og:site_name" content="Rancho Prado">
   <meta property="og:locale" content="pt_BR">
   
   <!-- Twitter -->

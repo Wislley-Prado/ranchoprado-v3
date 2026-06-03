@@ -111,7 +111,7 @@ const PrivacyPolicy = () => {
         {/* Introduction */}
         <div className="prose prose-lg max-w-none mb-12">
           <p className="text-lg text-muted-foreground leading-relaxed">
-            A <strong>PradoAqui</strong> está comprometida em proteger sua privacidade e dados pessoais. 
+            A <strong>Rancho Prado</strong> está comprometida em proteger sua privacidade e dados pessoais. 
             Esta política explica como coletamos, usamos, armazenamos e protegemos suas informações 
             quando você utiliza nossos serviços de reserva de pesca no Rio São Francisco.
           </p>
@@ -165,7 +165,7 @@ const PrivacyPolicy = () => {
               <div>
                 <h4 className="font-semibold mb-2">Encarregado de Dados (DPO)</h4>
                 <p className="text-sm text-muted-foreground">
-                  E-mail: privacidade@pradoaqui.com.br<br />
+                  E-mail: privacidade@ranchoprado.com.br<br />
                   Telefone: (38) 99999-9999<br />
                   Horário: Segunda a Sexta, 8h às 18h
                 </p>

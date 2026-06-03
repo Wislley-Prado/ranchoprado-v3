@@ -196,14 +196,14 @@ const PacoteDetalhes = () => {
   return (
     <>
       <Helmet>
-        <title>{pacote.nome} | Pacote de Pesca - PradoAqui</title>
+        <title>{pacote.nome} | Pacote de Pesca - Rancho Prado</title>
         <meta name="description" content={pacote.descricao?.substring(0, 160) || `Pacote ${pacote.nome}. ${pacote.duracao} para ${pacote.pessoas} pessoas.`} />
-        <meta property="og:title" content={`${pacote.nome} | PradoAqui`} />
+        <meta property="og:title" content={`${pacote.nome} | Rancho Prado`} />
         <meta property="og:description" content={pacote.descricao?.substring(0, 160) || `Pacote de pesca: ${pacote.duracao}`} />
         <meta property="og:image" content={heroImage} />
         <meta property="og:url" content={pageUrl} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${pacote.nome} | PradoAqui`} />
+        <meta name="twitter:title" content={`${pacote.nome} | Rancho Prado`} />
         <meta name="twitter:image" content={heroImage} />
         <link rel="canonical" href={pageUrl} />
       </Helmet>

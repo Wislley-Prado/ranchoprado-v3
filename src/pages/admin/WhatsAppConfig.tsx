@@ -140,7 +140,7 @@ const WhatsAppConfig = () => {
             <Label htmlFor="titulo">Título do Widget</Label>
             <Input
               id="titulo"
-              placeholder="PradoAqui - Atendimento"
+              placeholder="Rancho Prado - Atendimento"
               value={settings.whatsapp_titulo}
               onChange={(e) =>
                 setSettings({ ...settings, whatsapp_titulo: e.target.value })

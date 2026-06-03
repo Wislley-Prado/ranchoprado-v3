@@ -177,14 +177,14 @@ const RanchoDetalhes = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>{rancho.nome} | Rancho em {rancho.localizacao} - PradoAqui</title>
+        <title>{rancho.nome} | Rancho em {rancho.localizacao} - Rancho Prado</title>
         <meta name="description" content={rancho.descricao?.substring(0, 160) || `Rancho ${rancho.nome} em ${rancho.localizacao}. Capacidade para ${rancho.capacidade} pessoas.`} />
-        <meta property="og:title" content={`${rancho.nome} | PradoAqui`} />
+        <meta property="og:title" content={`${rancho.nome} | Rancho Prado`} />
         <meta property="og:description" content={rancho.descricao?.substring(0, 160) || `Rancho para pesca em ${rancho.localizacao}`} />
         <meta property="og:image" content={mainImage} />
         <meta property="og:url" content={pageUrl} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${rancho.nome} | PradoAqui`} />
+        <meta name="twitter:title" content={`${rancho.nome} | Rancho Prado`} />
         <meta name="twitter:image" content={mainImage} />
         <link rel="canonical" href={pageUrl} />
       </Helmet>

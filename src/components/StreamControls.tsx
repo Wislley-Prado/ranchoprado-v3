@@ -29,7 +29,7 @@ const StreamControls = () => {
     if (navigator.share) {
       navigator.share({
         title: 'Transmissão ao Vivo - Rio São Francisco',
-        text: 'Acompanhe as condições do rio em tempo real no PradoAqui',
+        text: 'Acompanhe as condições do rio em tempo real no Rancho Prado',
         url: window.location.href,
       });
     } else {

@@ -96,7 +96,7 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{post.titulo} | Blog PradoAqui</title>
+        <title>{post.titulo} | Blog Rancho Prado</title>
         <meta name="description" content={post.resumo || post.titulo} />
         <meta property="og:title" content={post.titulo} />
         <meta property="og:description" content={post.resumo || post.titulo} />
@@ -148,10 +148,10 @@ const BlogPost = () => {
             </div>
             <div className="flex items-center gap-2">
               <Avatar className="h-6 w-6">
-                <AvatarImage src={siteSettings?.autor_avatar_url || undefined} alt="PradoAqui" />
-                <AvatarFallback className="text-xs">PA</AvatarFallback>
+                <AvatarImage src={siteSettings?.autor_avatar_url || undefined} alt="Rancho Prado" />
+                <AvatarFallback className="text-xs">RP</AvatarFallback>
               </Avatar>
-              <span>PradoAqui</span>
+              <span>Rancho Prado</span>
             </div>
           </div>
 

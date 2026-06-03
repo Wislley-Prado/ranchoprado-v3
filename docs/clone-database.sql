@@ -1,5 +1,5 @@
 -- =====================================================
--- SCRIPT DE CLONAGEM DO BANCO - PradoAqui
+-- SCRIPT DE CLONAGEM DO BANCO - Rancho Prado
 -- Gerado em: 2026-02-25
 -- IMPORTANTE: Este script cria apenas a ESTRUTURA.
 -- Os dados NÃO são copiados.
@@ -277,8 +277,8 @@ CREATE TABLE public.anuncios (
 CREATE TABLE public.site_settings (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   telefone_contato text DEFAULT '(38) 98832-0108'::text,
-  email_contato text DEFAULT 'contato@pradoaqui.com.br'::text,
-  copyright_text text DEFAULT '© 2025 PradoAqui. Todos os direitos reservados'::text,
+  email_contato text DEFAULT 'contato@ranchoprado.com.br'::text,
+  copyright_text text DEFAULT '© 2026 Rancho Prado. Todos os direitos reservados'::text,
   facebook_url text,
   instagram_url text,
   youtube_url text,
@@ -288,8 +288,8 @@ CREATE TABLE public.site_settings (
   reserva_button_link text DEFAULT 'https://wa.me/5538988320108'::text,
   autor_avatar_url text,
   whatsapp_numero varchar DEFAULT '5531999999999'::varchar,
-  whatsapp_titulo varchar DEFAULT 'PradoAqui - Atendimento'::varchar,
-  whatsapp_mensagem_padrao text DEFAULT 'Olá! Gostaria de saber mais sobre os pacotes de pesca no PradoAqui.'::text,
+  whatsapp_titulo varchar DEFAULT 'Rancho Prado - Atendimento'::varchar,
+  whatsapp_mensagem_padrao text DEFAULT 'Olá! Gostaria de saber mais sobre os pacotes de pesca no Rancho Prado.'::text,
   whatsapp_saudacao text DEFAULT '👋 Olá! Como podemos ajudar você hoje?'::text,
   whatsapp_instrucao text DEFAULT 'Escolha uma opção abaixo ou digite sua mensagem:'::text,
   whatsapp_horario varchar DEFAULT 'Seg-Dom: 6h às 22h'::varchar,

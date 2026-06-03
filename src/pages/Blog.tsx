@@ -63,13 +63,13 @@ const Blog = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Blog PradoAqui | Dicas de Pesca no Rio São Francisco</title>
+        <title>Blog Rancho Prado | Dicas de Pesca no Rio São Francisco</title>
         <meta name="description" content="Dicas, novidades e informações sobre pesca no Rio São Francisco. Aprenda técnicas, conheça os melhores pontos e fique por dentro das novidades." />
-        <meta property="og:title" content="Blog PradoAqui | Dicas de Pesca" />
+        <meta property="og:title" content="Blog Rancho Prado | Dicas de Pesca" />
         <meta property="og:description" content="Dicas, novidades e informações sobre pesca no Rio São Francisco." />
         <meta property="og:image" content="/og-image.png" />
-        <meta property="og:url" content="https://pradoaqui.com/blog" />
-        <meta name="twitter:title" content="Blog PradoAqui | Dicas de Pesca" />
+        <meta property="og:url" content="https://ranchoprado.com.br/blog" />
+        <meta name="twitter:title" content="Blog Rancho Prado | Dicas de Pesca" />
         <meta name="twitter:image" content="/og-image.png" />
       </Helmet>
       
@@ -79,7 +79,7 @@ const Blog = () => {
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog PradoAqui</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog Rancho Prado</h1>
             <p className="text-lg md:text-xl opacity-90 max-w-2xl">
               Dicas, novidades e informações sobre pesca no Rio São Francisco
             </p>
@@ -144,7 +144,7 @@ const Blog = () => {
                         id: post.id,
                         title: post.titulo,
                         excerpt: post.resumo || '',
-                        author: 'PradoAqui',
+                        author: 'Rancho Prado',
                         date: new Date(post.data_publicacao || post.created_at).toLocaleDateString('pt-BR', {
                           day: 'numeric',
                           month: 'short',

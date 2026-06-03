@@ -36,7 +36,7 @@ export const IOSInstallPrompt: React.FC<IOSInstallPromptProps> = ({ onDismiss })
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
-              📱 Instalar PradoAqui
+              📱 Instalar Rancho Prado
             </CardTitle>
             <Button
               variant="ghost"
