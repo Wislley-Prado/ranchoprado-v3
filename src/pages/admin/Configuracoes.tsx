@@ -12,10 +12,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { clearAllCache, getCacheStats, resetCacheStats, invalidateCacheByPrefix } from '@/lib/cacheService';
+import { useQueryClient } from '@tanstack/react-query';
 
 const SETTINGS_ID = '00000000-0000-0000-0000-000000000001';
 
 const Configuracoes = () => {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -138,6 +140,18 @@ const Configuracoes = () => {
     }
   };
 
+  const handleSettingsUpdate = async () => {
+    // Limpar cache local (localStorage e memória)
+    invalidateCacheByPrefix('site_settings');
+    
+    // Invalida no React Query para forçar recarregamento em todo o app
+    queryClient.invalidateQueries(['site-settings']);
+    queryClient.invalidateQueries(['site-settings-favicon']);
+    
+    // Atualizar o estado local
+    await fetchSettings();
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -147,6 +161,12 @@ const Configuracoes = () => {
         .eq('id', SETTINGS_ID);
 
       if (error) throw error;
+
+      // Limpar cache local (localStorage e memória)
+      invalidateCacheByPrefix('site_settings');
+      
+      // Invalida no React Query para forçar recarregamento em todo o app
+      queryClient.invalidateQueries(['site-settings']);
 
       toast.success('Configurações salvas com sucesso!');
     } catch (error) {
@@ -252,7 +272,7 @@ const Configuracoes = () => {
           ogImageUrl={brandImages.og_image_url}
           pwaIconUrl={brandImages.pwa_icon_url}
           logoUrl={brandImages.logo_url}
-          onUpdate={fetchSettings}
+          onUpdate={handleSettingsUpdate}
         />
 
         <Card>
