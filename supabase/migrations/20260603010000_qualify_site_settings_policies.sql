@@ -16,3 +16,8 @@ ON public.site_settings
 FOR SELECT
 TO anon, authenticated
 USING (true);
+
+-- 3. Garantir que o registro inicial de configurações padrão com ID fixo existe
+INSERT INTO public.site_settings (id)
+VALUES ('00000000-0000-0000-0000-000000000001')
+ON CONFLICT (id) DO NOTHING;
