@@ -40,21 +40,11 @@ const LunarCalendar = () => {
       case 'Nova':
         return <div className={`${baseClasses} bg-gray-800`}></div>;
       case 'Crescente':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-800 to-yellow-200`}></div>;
-      case 'Quarto Crescente':
         return <div className={`${baseClasses} bg-gradient-to-r from-gray-800 via-yellow-200 to-yellow-200`}></div>;
-      case 'Crescente Gibosa':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-600 to-yellow-100`}></div>;
       case 'Cheia':
         return <div className={`${baseClasses} bg-yellow-100 border-2 border-yellow-300`}></div>;
-      case 'Minguante Gibosa':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-600 to-yellow-100`}></div>;
-      case 'Quarto Minguante':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 via-yellow-200 to-yellow-200`}></div>;
       case 'Minguante':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 to-yellow-200`}></div>;
-      case 'Minguante Crescente':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-700 to-gray-800`}></div>;
+        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 via-yellow-200 to-yellow-200`}></div>;
       default:
         return <div className={`${baseClasses} bg-gray-500`}></div>;
     }
@@ -78,21 +68,11 @@ const LunarCalendar = () => {
       case 'Nova':
         return <div className={`${baseClasses} bg-gray-800`}></div>;
       case 'Crescente':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-800 to-yellow-200`}></div>;
-      case 'Quarto Crescente':
         return <div className={`${baseClasses} bg-gradient-to-r from-gray-800 via-yellow-200 to-yellow-200`}></div>;
-      case 'Crescente Gibosa':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-600 to-yellow-100 border border-yellow-200`}></div>;
       case 'Cheia':
         return <div className={`${baseClasses} bg-yellow-100 border-2 border-yellow-300`}></div>;
-      case 'Minguante Gibosa':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-600 to-yellow-100 border border-yellow-200`}></div>;
-      case 'Quarto Minguante':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 via-yellow-200 to-yellow-200`}></div>;
       case 'Minguante':
-        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 to-yellow-200`}></div>;
-      case 'Minguante Crescente':
-        return <div className={`${baseClasses} bg-gradient-to-r from-gray-700 to-gray-800`}></div>;
+        return <div className={`${baseClasses} bg-gradient-to-l from-gray-800 via-yellow-200 to-yellow-200`}></div>;
       default:
         return <div className={`${baseClasses} bg-gray-500`}></div>;
     }
@@ -131,12 +111,10 @@ const LunarCalendar = () => {
                 <div className="text-center sm:text-right">
                   <Badge className="bg-white text-blue-700 text-sm md:text-lg px-3 md:px-4 py-1 md:py-2">
                     {
-                    lunarData.currentPhase.phase === 'Nova' || lunarData.currentPhase.phase === 'Minguante Crescente' 
+                    lunarData.currentPhase.phase === 'Nova'
                         ? 'Excelente' 
-                        : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante' || lunarData.currentPhase.phase === 'Quarto Crescente' || lunarData.currentPhase.phase === 'Quarto Minguante'
+                        : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante'
                         ? 'Boa' 
-                        : lunarData.currentPhase.phase === 'Crescente Gibosa' || lunarData.currentPhase.phase === 'Minguante Gibosa'
-                        ? 'Regular'
                         : 'Fraca'
                     }
                   </Badge>
@@ -237,22 +215,18 @@ const LunarCalendar = () => {
               <div className="mt-4 md:mt-6 p-3 md:p-4 bg-green-50 rounded-lg border border-green-100">
                 <h5 className="font-bold text-green-700 mb-2 text-sm md:text-base">
                   Condição Atual: {
-                    lunarData.currentPhase.phase === 'Nova' || lunarData.currentPhase.phase === 'Minguante Crescente' 
+                    lunarData.currentPhase.phase === 'Nova'
                       ? 'Excelente' 
-                      : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante' || lunarData.currentPhase.phase === 'Quarto Crescente' || lunarData.currentPhase.phase === 'Quarto Minguante'
+                      : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante'
                       ? 'Boa' 
-                      : lunarData.currentPhase.phase === 'Crescente Gibosa' || lunarData.currentPhase.phase === 'Minguante Gibosa'
-                      ? 'Regular'
                       : 'Fraca'
                   }
                 </h5>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  {lunarData.currentPhase.phase === 'Nova' || lunarData.currentPhase.phase === 'Minguante Crescente'
+                  {lunarData.currentPhase.phase === 'Nova'
                     ? 'Condições ideais para pesca de tucunaré e dourado. Recomendamos iscas artificiais no período da manhã.'
-                    : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante' || lunarData.currentPhase.phase === 'Quarto Crescente' || lunarData.currentPhase.phase === 'Quarto Minguante'
+                    : lunarData.currentPhase.phase === 'Crescente' || lunarData.currentPhase.phase === 'Minguante'
                     ? 'Boa atividade dos peixes. Horários de madrugada e entardecer são mais promissores.'
-                    : lunarData.currentPhase.phase === 'Crescente Gibosa' || lunarData.currentPhase.phase === 'Minguante Gibosa'
-                    ? 'Fase gibosa com atividade moderada. Peixes mais ativos durante mudanças de luz.'
                     : 'Lua cheia pode reduzir a atividade diurna. Concentre na pesca noturna e madrugada.'
                   }
                 </p>

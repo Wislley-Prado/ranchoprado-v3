@@ -12,17 +12,9 @@ export interface EphemerisEntry {
 // Mapeamento de fase principal para nome em português
 export const PHASE_NAMES: Record<PhaseType, string> = {
   new_moon: 'Nova',
-  first_quarter: 'Quarto Crescente',
+  first_quarter: 'Crescente',
   full_moon: 'Cheia',
-  last_quarter: 'Quarto Minguante',
-};
-
-// Fase intermediária entre duas fases principais
-export const INTERMEDIATE_PHASES: Record<string, string> = {
-  'new_moon->first_quarter': 'Crescente',
-  'first_quarter->full_moon': 'Crescente Gibosa',
-  'full_moon->last_quarter': 'Minguante Gibosa',
-  'last_quarter->new_moon': 'Minguante Crescente',
+  last_quarter: 'Minguante',
 };
 
 // Dados astronômicos precisos 2025-2028
@@ -264,21 +256,13 @@ export function getCurrentLunarPhase(now: Date = new Date()) {
   // Posição proporcional entre as duas fases (0 a 1)
   const progress = (nowMs - prevTime) / (nextTime - prevTime);
 
-  // Determinar nome da fase atual
-  const transitionKey = `${prev.phase}->${next.phase}`;
-  const intermediateName = INTERMEDIATE_PHASES[transitionKey];
+  // Determinar nome da fase atual: no calendário comum, a fase atual é a anterior
+  let currentPhaseName = PHASE_NAMES[prev.phase];
 
-  // Se estamos muito perto de uma fase principal (< 12h), usar o nome principal
-  const hoursFromPrev = (nowMs - prevTime) / (1000 * 60 * 60);
+  // Se estamos muito perto da próxima fase (< 12h), já consideramos a próxima
   const hoursToNext = (nextTime - nowMs) / (1000 * 60 * 60);
-
-  let currentPhaseName: string;
-  if (hoursFromPrev < 12) {
-    currentPhaseName = PHASE_NAMES[prev.phase];
-  } else if (hoursToNext < 12) {
+  if (hoursToNext < 12) {
     currentPhaseName = PHASE_NAMES[next.phase];
-  } else {
-    currentPhaseName = intermediateName || PHASE_NAMES[prev.phase];
   }
 
   // Calcular iluminação por interpolação

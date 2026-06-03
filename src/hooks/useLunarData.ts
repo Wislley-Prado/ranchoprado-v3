@@ -29,30 +29,22 @@ export interface LunarData {
 const FISHING_QUALITIES: Record<string, string> = {
   'Nova': 'Excelente',
   'Crescente': 'Boa',
-  'Quarto Crescente': 'Boa',
-  'Crescente Gibosa': 'Regular',
   'Cheia': 'Fraca',
-  'Minguante Gibosa': 'Regular',
-  'Quarto Minguante': 'Boa',
-  'Minguante Crescente': 'Excelente',
+  'Minguante': 'Boa',
 };
 
 const PHASE_COLORS: Record<string, string> = {
   'Nova': 'bg-green-600',
   'Crescente': 'bg-blue-500',
-  'Quarto Crescente': 'bg-blue-500',
-  'Crescente Gibosa': 'bg-yellow-500',
   'Cheia': 'bg-orange-500',
-  'Minguante Gibosa': 'bg-yellow-600',
-  'Quarto Minguante': 'bg-blue-600',
-  'Minguante Crescente': 'bg-green-600',
+  'Minguante': 'bg-blue-600',
 };
 
 const getBestFishingTimes = (currentPhase: string) => [
   { time: "05:30 - 07:00", activity: "Nascente do Sol", quality: 'excellent' as const },
   { time: "17:30 - 19:00", activity: "Pôr do Sol", quality: 'excellent' as const },
   { time: "22:00 - 00:30", activity: "Lua Alta", quality: (currentPhase === 'Cheia' ? 'excellent' : currentPhase === 'Nova' ? 'good' : 'fair') as 'excellent' | 'good' | 'fair' },
-  { time: "03:00 - 05:00", activity: "Madrugada", quality: (currentPhase === 'Nova' || currentPhase === 'Quarto Minguante' ? 'good' : 'fair') as 'excellent' | 'good' | 'fair' },
+  { time: "03:00 - 05:00", activity: "Madrugada", quality: (currentPhase === 'Nova' || currentPhase === 'Minguante' ? 'good' : 'fair') as 'excellent' | 'good' | 'fair' },
 ];
 
 const calculateLunarData = (): LunarData => {
