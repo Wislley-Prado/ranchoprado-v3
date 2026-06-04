@@ -4,13 +4,14 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import BlogCard from './BlogCard';
 import { BookOpen, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useBlogPosts } from '@/hooks/useOptimizedData';
+import { useBlogPosts, useSiteSettings } from '@/hooks/useOptimizedData';
 
 const BlogSection = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
 
+  const { data: settings } = useSiteSettings();
   // Fetch recent published posts with cache
   const { data: recentPosts, isLoading } = useBlogPosts(6);
 
@@ -39,26 +40,53 @@ const BlogSection = () => {
     <section id="blog" className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header da Seção */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <BookOpen className="h-8 w-8 text-rio-blue" />
-            <h2 className="text-3xl font-bold text-gray-900">Blog Rancho Prado</h2>
+        {settings?.banner_blog_url ? (
+          <div 
+            className="relative rounded-2xl overflow-hidden py-12 px-4 text-center text-white mb-12 bg-rio-blue bg-cover bg-center shadow-lg"
+            style={{ backgroundImage: `url(${settings.banner_blog_url})` }}
+          >
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-center space-x-2 mb-3">
+                <BookOpen className="h-8 w-8 text-sunset-orange" />
+                <h2 className="text-3xl font-bold drop-shadow-md">Blog Rancho Prado</h2>
+              </div>
+              <p className="text-lg opacity-90 max-w-2xl mx-auto drop-shadow-md">
+                Fique por dentro das últimas novidades, dicas de pesca e informações sobre o Rio São Francisco
+              </p>
+              <div className="flex items-center justify-center space-x-1 mt-3 text-sm text-sunset-orange">
+                <TrendingUp className="h-4 w-4" />
+                <span className="font-medium">Posts mais recentes</span>
+              </div>
+              
+              <div className="md:hidden mt-4 text-xs text-white/70 flex items-center justify-center space-x-2">
+                <ChevronLeft className="h-3 w-3 animate-pulse" />
+                <span>Deslize para ver mais posts</span>
+                <ChevronRight className="h-3 w-3 animate-pulse" />
+              </div>
+            </div>
           </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Fique por dentro das últimas novidades, dicas de pesca e informações sobre o Rio São Francisco
-          </p>
-          <div className="flex items-center justify-center space-x-1 mt-4 text-sm text-rio-blue">
-            <TrendingUp className="h-4 w-4" />
-            <span className="font-medium">Posts mais recentes</span>
+        ) : (
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <BookOpen className="h-8 w-8 text-rio-blue" />
+              <h2 className="text-3xl font-bold text-gray-900">Blog Rancho Prado</h2>
+            </div>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Fique por dentro das últimas novidades, dicas de pesca e informações sobre o Rio São Francisco
+            </p>
+            <div className="flex items-center justify-center space-x-1 mt-4 text-sm text-rio-blue">
+              <TrendingUp className="h-4 w-4" />
+              <span className="font-medium">Posts mais recentes</span>
+            </div>
+            
+            <div className="md:hidden mt-4 text-xs text-gray-500 flex items-center justify-center space-x-2">
+              <ChevronLeft className="h-3 w-3 animate-pulse" />
+              <span>Deslize para ver mais posts</span>
+              <ChevronRight className="h-3 w-3 animate-pulse" />
+            </div>
           </div>
-          
-          {/* Mobile hint */}
-          <div className="md:hidden mt-4 text-xs text-gray-500 flex items-center justify-center space-x-2">
-            <ChevronLeft className="h-3 w-3 animate-pulse" />
-            <span>Deslize para ver mais posts</span>
-            <ChevronRight className="h-3 w-3 animate-pulse" />
-          </div>
-        </div>
+        )}
 
         {/* Carousel de Posts */}
         <div className="relative">
