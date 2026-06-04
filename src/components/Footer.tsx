@@ -81,14 +81,16 @@ const Footer = () => {
                   Blog
                 </button>
               </li>
-              <li>
-                <button 
-                  onClick={() => handleNavClick('/live', '')}
-                  className="text-gray-300 hover:text-rio-blue transition-colors bg-transparent border-none cursor-pointer"
-                >
-                  Transmissão Ao Vivo
-                </button>
-              </li>
+              {settings?.youtube_live_url && (
+                <li>
+                  <button 
+                    onClick={() => handleNavClick('/live', '')}
+                    className="text-gray-300 hover:text-rio-blue transition-colors bg-transparent border-none cursor-pointer"
+                  >
+                    Transmissão Ao Vivo
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
 

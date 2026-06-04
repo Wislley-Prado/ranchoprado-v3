@@ -15,7 +15,7 @@ const Header = () => {
     { name: 'Ranchos', href: '/', hash: 'ranchos' },
     { name: 'Pacotes', href: '/pacotes', hash: '' },
     { name: 'Blog', href: '/blog', hash: '' },
-    { name: 'Transmissão', href: '/live', hash: '' },
+    ...(settings?.youtube_live_url ? [{ name: 'Transmissão', href: '/live', hash: '' }] : []),
     { name: 'Represa', href: '/', hash: 'represa' },
   ];
 
