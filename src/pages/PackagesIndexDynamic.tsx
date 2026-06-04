@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
+import { useSiteSettings } from '@/hooks/useOptimizedData';
 
 interface Pacote {
   id: string;
@@ -31,6 +32,7 @@ interface Pacote {
 }
 
 const PackagesIndexDynamic = () => {
+  const { data: settings } = useSiteSettings();
   const [pacotes, setPacotes] = useState<Pacote[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -76,13 +78,20 @@ const PackagesIndexDynamic = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+      <section 
+        className="relative py-20 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground bg-cover bg-center overflow-hidden"
+        style={{ 
+          backgroundImage: settings?.banner_pacotes_url 
+            ? `url(${settings.banner_pacotes_url})` 
+            : 'none' 
+        }}
+      >
+        <div className={`absolute inset-0 ${settings?.banner_pacotes_url ? 'bg-black/40 backdrop-blur-[1px]' : 'bg-black/10'}`}></div>
+        <div className="relative container mx-auto px-4 text-center z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 drop-shadow-md">
             Pacotes de Pescaria Personalizados
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto text-primary-foreground/90">
+          <p className="text-xl md:text-2xl max-w-3xl mx-auto text-primary-foreground/90 drop-shadow-md">
             Escolha o pacote perfeito para sua aventura no Rio São Francisco
           </p>
         </div>

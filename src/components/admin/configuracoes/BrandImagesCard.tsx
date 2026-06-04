@@ -14,6 +14,9 @@ interface BrandImagesCardProps {
   ogImageUrl: string;
   pwaIconUrl: string;
   logoUrl: string;
+  bannerBlogUrl: string;
+  bannerRanchosUrl: string;
+  bannerPacotesUrl: string;
   onUpdate: () => void;
 }
 
@@ -65,8 +68,8 @@ const ImageUploader = ({ label, description, currentUrl, bucket, path, field, ma
       }
 
       const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, compressed, { cacheControl: '3600' });
+         .from(bucket)
+         .upload(fileName, compressed, { cacheControl: '3600' });
 
       if (uploadError) throw uploadError;
 
@@ -180,16 +183,25 @@ const ImageUploader = ({ label, description, currentUrl, bucket, path, field, ma
   );
 };
 
-export const BrandImagesCard = ({ faviconUrl, ogImageUrl, pwaIconUrl, logoUrl, onUpdate }: BrandImagesCardProps) => {
+export const BrandImagesCard = ({
+  faviconUrl,
+  ogImageUrl,
+  pwaIconUrl,
+  logoUrl,
+  bannerBlogUrl,
+  bannerRanchosUrl,
+  bannerPacotesUrl,
+  onUpdate
+}: BrandImagesCardProps) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Image className="w-5 h-5" />
-          Imagens do Site
+          Imagens e Banners do Site
         </CardTitle>
         <CardDescription>
-          Logo do header, favicon, imagem de compartilhamento (OG Image) e ícones PWA
+          Logo do header, favicon, imagem de compartilhamento (OG Image), ícones PWA e banners das páginas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -242,6 +254,45 @@ export const BrandImagesCard = ({ faviconUrl, ogImageUrl, pwaIconUrl, logoUrl, o
           maxHeight={512}
           onUpdate={onUpdate}
           previewSize="w-12 h-12"
+        />
+
+        <ImageUploader
+          label="Banner do Cabeçalho - Blog"
+          description="Imagem exibida no topo da página de Blog (recomendado: 1920x400px)"
+          currentUrl={bannerBlogUrl}
+          bucket="configuracoes"
+          path="banner-blog"
+          field="banner_blog_url"
+          maxWidth={1920}
+          maxHeight={600}
+          onUpdate={onUpdate}
+          previewSize="w-32 h-12"
+        />
+
+        <ImageUploader
+          label="Banner do Cabeçalho - Ranchos"
+          description="Imagem exibida no topo da seção de Ranchos (recomendado: 1920x400px)"
+          currentUrl={bannerRanchosUrl}
+          bucket="configuracoes"
+          path="banner-ranchos"
+          field="banner_ranchos_url"
+          maxWidth={1920}
+          maxHeight={600}
+          onUpdate={onUpdate}
+          previewSize="w-32 h-12"
+        />
+
+        <ImageUploader
+          label="Banner do Cabeçalho - Pacotes"
+          description="Imagem exibida no topo da página de Pacotes (recomendado: 1920x400px)"
+          currentUrl={bannerPacotesUrl}
+          bucket="configuracoes"
+          path="banner-pacotes"
+          field="banner_pacotes_url"
+          maxWidth={1920}
+          maxHeight={600}
+          onUpdate={onUpdate}
+          previewSize="w-32 h-12"
         />
       </CardContent>
     </Card>

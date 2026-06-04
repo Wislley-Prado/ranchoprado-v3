@@ -120,6 +120,9 @@ export interface SiteSettings {
   youtube_live_url?: string;
   youtube_video_url?: string;
   youtube_institucional_url?: string;
+  banner_blog_url?: string;
+  banner_ranchos_url?: string;
+  banner_pacotes_url?: string;
   facebook_pixel?: string;
   google_analytics?: string;
   google_tag_manager?: string;

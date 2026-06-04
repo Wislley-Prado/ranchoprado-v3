@@ -11,10 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSiteSettings } from '@/hooks/useOptimizedData';
 
 const POSTS_PER_PAGE = 9;
 
 const Blog = () => {
+  const { data: settings } = useSiteSettings();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,10 +79,21 @@ const Blog = () => {
       
       <main className="flex-1 bg-gradient-to-br from-background to-muted/20">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog Rancho Prado</h1>
-            <p className="text-lg md:text-xl opacity-90 max-w-2xl">
+        <section 
+          className="relative bg-cover bg-center py-20 text-white overflow-hidden bg-gradient-to-r from-primary to-primary/80"
+          style={{ 
+            backgroundImage: settings?.banner_blog_url 
+              ? `url(${settings.banner_blog_url})` 
+              : 'none' 
+          }}
+        >
+          {settings?.banner_blog_url && (
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+          )}
+          
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-md">Blog Rancho Prado</h1>
+            <p className="text-lg md:text-xl opacity-95 max-w-2xl drop-shadow-md">
               Dicas, novidades e informações sobre pesca no Rio São Francisco
             </p>
           </div>

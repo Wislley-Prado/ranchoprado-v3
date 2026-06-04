@@ -32,7 +32,7 @@ const Configuracoes = () => {
     defluencia: '',
     data: new Date().toLocaleDateString('pt-BR'),
   });
-  const [brandImages, setBrandImages] = useState({ favicon_url: '', og_image_url: '', pwa_icon_url: '', logo_url: '' });
+  const [brandImages, setBrandImages] = useState({ favicon_url: '', og_image_url: '', pwa_icon_url: '', logo_url: '', banner_blog_url: '', banner_ranchos_url: '', banner_pacotes_url: '' });
   const [settings, setSettings] = useState({
     facebook_pixel: '',
     google_analytics: '',
@@ -76,6 +76,9 @@ const Configuracoes = () => {
           og_image_url: (data as any).og_image_url || '',
           pwa_icon_url: (data as any).pwa_icon_url || '',
           logo_url: (data as any).logo_url || '',
+          banner_blog_url: (data as any).banner_blog_url || '',
+          banner_ranchos_url: (data as any).banner_ranchos_url || '',
+          banner_pacotes_url: (data as any).banner_pacotes_url || '',
         });
         setSettings({
           facebook_pixel: data.facebook_pixel || '',
@@ -272,6 +275,9 @@ const Configuracoes = () => {
           ogImageUrl={brandImages.og_image_url}
           pwaIconUrl={brandImages.pwa_icon_url}
           logoUrl={brandImages.logo_url}
+          bannerBlogUrl={brandImages.banner_blog_url}
+          bannerRanchosUrl={brandImages.banner_ranchos_url}
+          bannerPacotesUrl={brandImages.banner_pacotes_url}
           onUpdate={handleSettingsUpdate}
         />
 

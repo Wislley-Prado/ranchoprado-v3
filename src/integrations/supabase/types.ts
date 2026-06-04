@@ -1014,6 +1014,9 @@ export type Database = {
           youtube_live_url: string | null
           youtube_url: string | null
           youtube_video_url: string | null
+          banner_blog_url: string | null
+          banner_ranchos_url: string | null
+          banner_pacotes_url: string | null
         }
         Insert: {
           autor_avatar_url?: string | null
@@ -1050,6 +1053,9 @@ export type Database = {
           youtube_live_url?: string | null
           youtube_url?: string | null
           youtube_video_url?: string | null
+          banner_blog_url?: string | null
+          banner_ranchos_url?: string | null
+          banner_pacotes_url?: string | null
         }
         Update: {
           autor_avatar_url?: string | null
@@ -1086,6 +1092,9 @@ export type Database = {
           youtube_live_url?: string | null
           youtube_url?: string | null
           youtube_video_url?: string | null
+          banner_blog_url?: string | null
+          banner_ranchos_url?: string | null
+          banner_pacotes_url?: string | null
         }
         Relationships: []
       }
@@ -1274,6 +1283,9 @@ export type Database = {
           youtube_live_url: string | null
           youtube_url: string | null
           youtube_video_url: string | null
+          banner_blog_url: string | null
+          banner_ranchos_url: string | null
+          banner_pacotes_url: string | null
         }
         Insert: {
           autor_avatar_url?: string | null
@@ -1304,6 +1316,9 @@ export type Database = {
           youtube_live_url?: string | null
           youtube_url?: string | null
           youtube_video_url?: string | null
+          banner_blog_url?: string | null
+          banner_ranchos_url?: string | null
+          banner_pacotes_url?: string | null
         }
         Update: {
           autor_avatar_url?: string | null
@@ -1334,6 +1349,9 @@ export type Database = {
           youtube_live_url?: string | null
           youtube_url?: string | null
           youtube_video_url?: string | null
+          banner_blog_url?: string | null
+          banner_ranchos_url?: string | null
+          banner_pacotes_url?: string | null
         }
         Relationships: []
       }
