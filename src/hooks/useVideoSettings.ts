@@ -2,6 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSiteSettings } from '@/hooks/useOptimizedData';
+import { invalidateCacheByPrefix } from '@/lib/cacheService';
+
+const SETTINGS_ID = '00000000-0000-0000-0000-000000000001';
 
 export interface VideoSettings {
   youtube_live_url: string | null;
@@ -28,11 +31,12 @@ export const useVideoSettings = () => {
       const { error } = await supabase
         .from('site_settings')
         .update(newSettings)
-        .eq('id', (await supabase.from('site_settings').select('id').single()).data?.id);
+        .eq('id', SETTINGS_ID);
 
       if (error) throw error;
     },
     onSuccess: () => {
+      invalidateCacheByPrefix('site_settings');
       queryClient.invalidateQueries({ queryKey: ['site-settings'] });
       queryClient.invalidateQueries({ queryKey: ['video-settings'] });
       toast.success('Configurações de vídeo atualizadas com sucesso!');
