@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
+import { extractYouTubeId } from '@/hooks/useVideoSettings';
 
 interface YouTubePlayerProps {
   videoUrl: string;
@@ -12,25 +13,7 @@ export const YouTubePlayer = ({ videoUrl, title = 'Vídeo', className = '' }: Yo
 
   // Extrair ID do vídeo de diferentes formatos de URL do YouTube
   const getVideoId = (url: string): string | null => {
-    if (!url) return null;
-
-    // youtube.com/watch?v=VIDEO_ID
-    const watchMatch = url.match(/(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
-    if (watchMatch) return watchMatch[1];
-
-    // youtube.com/shorts/VIDEO_ID
-    const shortsMatch = url.match(/(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
-    if (shortsMatch) return shortsMatch[1];
-
-    // youtube.com/live/VIDEO_ID
-    const liveMatch = url.match(/(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
-    if (liveMatch) return liveMatch[1];
-
-    // youtu.be/VIDEO_ID
-    const youtuBeMatch = url.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    if (youtuBeMatch) return youtuBeMatch[1];
-
-    return null;
+    return extractYouTubeId(url);
   };
 
   // Verificar se é um Short
@@ -123,16 +106,7 @@ export const YouTubePlayer = ({ videoUrl, title = 'Vídeo', className = '' }: Yo
 // Componente simplificado para preview no admin
 export const YouTubePreview = ({ videoUrl, className = '' }: { videoUrl: string; className?: string }) => {
   const getVideoId = (url: string): string | null => {
-    if (!url) return null;
-    const watchMatch = url.match(/(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
-    if (watchMatch) return watchMatch[1];
-    const shortsMatch = url.match(/(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
-    if (shortsMatch) return shortsMatch[1];
-    const liveMatch = url.match(/(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
-    if (liveMatch) return liveMatch[1];
-    const youtuBeMatch = url.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    if (youtuBeMatch) return youtuBeMatch[1];
-    return null;
+    return extractYouTubeId(url);
   };
 
   const isShorts = videoUrl.includes('/shorts/');

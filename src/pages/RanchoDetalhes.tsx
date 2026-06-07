@@ -24,6 +24,7 @@ import { RanchoFAQs } from '@/components/RanchoFAQs';
 import { useRanchoBySlug } from '@/hooks/useOptimizedData';
 import { ShareButtons } from '@/components/ShareButtons';
 import { SITE_CONFIG } from '@/lib/constants';
+import { extractYouTubeId } from '@/hooks/useVideoSettings';
 
 const amenityIcons: { [key: string]: React.ReactNode } = {
   'Wi-Fi': <Wifi className="h-5 w-5" />,
@@ -141,20 +142,10 @@ const RanchoDetalhes = () => {
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
-    if (!url) return null;
-    
-    // Extract video ID from YouTube Shorts URL
-    const shortsMatch = url.match(/shorts\/([a-zA-Z0-9_-]+)/);
-    if (shortsMatch) {
-      return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+    const videoId = extractYouTubeId(url);
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
     }
-    
-    // Handle regular YouTube URLs as fallback
-    const videoMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
-    if (videoMatch) {
-      return `https://www.youtube.com/embed/${videoMatch[1]}`;
-    }
-    
     return null;
   };
 

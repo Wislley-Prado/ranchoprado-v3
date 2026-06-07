@@ -58,10 +58,42 @@ export const useVideoSettings = () => {
 export const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
   
+  try {
+    const cleanUrl = url.trim();
+    
+    // Se for apenas o ID de 11 caracteres do YouTube
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      return cleanUrl;
+    }
+    
+    const urlToParse = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+    const parsed = new URL(urlToParse);
+    const hostname = parsed.hostname.replace('www.', '');
+    
+    if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
+      const v = parsed.searchParams.get('v');
+      if (v) return v;
+      
+      const pathParts = parsed.pathname.split('/');
+      if (pathParts[1] === 'shorts' && pathParts[2]) return pathParts[2];
+      if (pathParts[1] === 'embed' && pathParts[2]) return pathParts[2];
+      if (pathParts[1] === 'live' && pathParts[2]) return pathParts[2];
+      if (pathParts[1] === 'v' && pathParts[2]) return pathParts[2];
+    } else if (hostname === 'youtu.be') {
+      const pathParts = parsed.pathname.split('/');
+      if (pathParts[1]) return pathParts[1];
+    }
+  } catch (e) {
+    // Fallback para Regex se falhar o parser de URL
+  }
+  
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?\/\s]+)/,
-    /youtube\.com\/shorts\/([^&?\/\s]+)/,
-    /youtube\.com\/live\/([^&?\/\s]+)/,
+    /[?&]v=([^#&?]+)/,
+    /youtube\.com\/embed\/([^#&?]+)/,
+    /youtube\.com\/shorts\/([^#&?]+)/,
+    /youtube\.com\/live\/([^#&?]+)/,
+    /youtube\.com\/v\/([^#&?]+)/,
+    /youtu\.be\/([^#&?]+)/,
   ];
 
   for (const pattern of patterns) {
