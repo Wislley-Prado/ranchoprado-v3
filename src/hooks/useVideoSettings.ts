@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -20,11 +21,11 @@ export const useVideoSettings = () => {
   const { data: siteSettings, isLoading } = useSiteSettings();
 
   // Extrair video settings dos site settings já carregados
-  const settings: VideoSettings | null = siteSettings ? {
+  const settings = useMemo(() => siteSettings ? {
     youtube_live_url: siteSettings.youtube_live_url || null,
     youtube_video_url: siteSettings.youtube_video_url || null,
     youtube_institucional_url: siteSettings.youtube_institucional_url || null,
-  } : null;
+  } : null, [siteSettings]);
 
   const updateSettings = useMutation({
     mutationFn: async (newSettings: Partial<VideoSettings>) => {

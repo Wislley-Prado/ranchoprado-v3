@@ -15,18 +15,16 @@ const ConfiguracoesVideos = () => {
   const [liveUrlError, setLiveUrlError] = useState('');
   const [videoUrlError, setVideoUrlError] = useState('');
   const [institucionalUrlError, setInstitucionalUrlError] = useState('');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (settings) {
-      const cleanUrl = (url: string | null | undefined) => {
-        if (!url || !isValidYouTubeUrl(url)) return '';
-        return url;
-      };
-      setLiveUrl(cleanUrl(settings.youtube_live_url));
-      setVideoUrl(cleanUrl(settings.youtube_video_url));
-      setInstitucionalUrl(cleanUrl(settings.youtube_institucional_url));
+    if (settings && !isInitialized) {
+      setLiveUrl(settings.youtube_live_url || '');
+      setVideoUrl(settings.youtube_video_url || '');
+      setInstitucionalUrl(settings.youtube_institucional_url || '');
+      setIsInitialized(true);
     }
-  }, [settings]);
+  }, [settings, isInitialized]);
 
   const validateLiveUrl = (url: string) => {
     if (url && !isValidYouTubeUrl(url)) {

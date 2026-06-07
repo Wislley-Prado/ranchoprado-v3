@@ -17,7 +17,7 @@ export const YouTubePlayer = ({ videoUrl, title = 'Vídeo', className = '' }: Yo
   };
 
   // Verificar se é um Short
-  const isShorts = videoUrl.includes('/shorts/');
+  const isShorts = videoUrl?.includes('/shorts/') || false;
 
   const videoId = getVideoId(videoUrl);
 
@@ -109,7 +109,7 @@ export const YouTubePreview = ({ videoUrl, className = '' }: { videoUrl: string;
     return extractYouTubeId(url);
   };
 
-  const isShorts = videoUrl.includes('/shorts/');
+  const isShorts = videoUrl?.includes('/shorts/') || false;
   const videoId = getVideoId(videoUrl);
 
   if (!videoId) {
