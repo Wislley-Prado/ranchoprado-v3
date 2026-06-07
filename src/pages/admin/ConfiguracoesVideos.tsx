@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2, Video, Radio, Film, X } from 'lucide-react';
 import { useVideoSettings, extractYouTubeId, isValidYouTubeUrl } from '@/hooks/useVideoSettings';
-import { YouTubePreview } from '@/components/YouTubePlayer';
+import { YouTubePlayer } from '@/components/YouTubePlayer';
 
 const ConfiguracoesVideos = () => {
   const { settings, isLoading, updateSettings, isUpdating } = useVideoSettings();
@@ -19,7 +19,7 @@ const ConfiguracoesVideos = () => {
   useEffect(() => {
     if (settings) {
       const cleanUrl = (url: string | null | undefined) => {
-        if (!url || url === 'https://www.youtube.com/watch?v=...') return '';
+        if (!url || !isValidYouTubeUrl(url)) return '';
         return url;
       };
       setLiveUrl(cleanUrl(settings.youtube_live_url));
@@ -212,7 +212,7 @@ const ConfiguracoesVideos = () => {
             {videoId && (
               <div className="space-y-2">
                 <Label>Preview do Vídeo</Label>
-                <YouTubePreview videoUrl={videoUrl} />
+                <YouTubePlayer videoUrl={videoUrl} />
               </div>
             )}
           </CardContent>
@@ -270,7 +270,7 @@ const ConfiguracoesVideos = () => {
             {institucionalVideoId && (
               <div className="space-y-2">
                 <Label>Preview do Vídeo</Label>
-                <YouTubePreview videoUrl={institucionalUrl} />
+                <YouTubePlayer videoUrl={institucionalUrl} />
               </div>
             )}
           </CardContent>

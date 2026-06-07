@@ -70,30 +70,36 @@ export const extractYouTubeId = (url: string): string | null => {
     const parsed = new URL(urlToParse);
     const hostname = parsed.hostname.replace('www.', '');
     
+    let id: string | null = null;
     if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
       const v = parsed.searchParams.get('v');
-      if (v) return v;
-      
-      const pathParts = parsed.pathname.split('/');
-      if (pathParts[1] === 'shorts' && pathParts[2]) return pathParts[2];
-      if (pathParts[1] === 'embed' && pathParts[2]) return pathParts[2];
-      if (pathParts[1] === 'live' && pathParts[2]) return pathParts[2];
-      if (pathParts[1] === 'v' && pathParts[2]) return pathParts[2];
+      if (v) id = v;
+      else {
+        const pathParts = parsed.pathname.split('/');
+        if (pathParts[1] === 'shorts' && pathParts[2]) id = pathParts[2];
+        else if (pathParts[1] === 'embed' && pathParts[2]) id = pathParts[2];
+        else if (pathParts[1] === 'live' && pathParts[2]) id = pathParts[2];
+        else if (pathParts[1] === 'v' && pathParts[2]) id = pathParts[2];
+      }
     } else if (hostname === 'youtu.be') {
       const pathParts = parsed.pathname.split('/');
-      if (pathParts[1]) return pathParts[1];
+      if (pathParts[1]) id = pathParts[1];
+    }
+
+    if (id && /^[a-zA-Z0-9_-]{11}$/.test(id)) {
+      return id;
     }
   } catch (e) {
     // Fallback para Regex se falhar o parser de URL
   }
   
   const patterns = [
-    /[?&]v=([^#&?]+)/,
-    /youtube\.com\/embed\/([^#&?]+)/,
-    /youtube\.com\/shorts\/([^#&?]+)/,
-    /youtube\.com\/live\/([^#&?]+)/,
-    /youtube\.com\/v\/([^#&?]+)/,
-    /youtu\.be\/([^#&?]+)/,
+    /[?&]v=([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
   ];
 
   for (const pattern of patterns) {
