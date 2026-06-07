@@ -18,9 +18,13 @@ const ConfiguracoesVideos = () => {
 
   useEffect(() => {
     if (settings) {
-      setLiveUrl(settings.youtube_live_url || '');
-      setVideoUrl(settings.youtube_video_url || '');
-      setInstitucionalUrl(settings.youtube_institucional_url || '');
+      const cleanUrl = (url: string | null | undefined) => {
+        if (!url || url === 'https://www.youtube.com/watch?v=...') return '';
+        return url;
+      };
+      setLiveUrl(cleanUrl(settings.youtube_live_url));
+      setVideoUrl(cleanUrl(settings.youtube_video_url));
+      setInstitucionalUrl(cleanUrl(settings.youtube_institucional_url));
     }
   }, [settings]);
 
