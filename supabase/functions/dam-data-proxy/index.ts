@@ -52,36 +52,119 @@ serve(async (req) => {
       console.log('📌 [PROXY] Usando URL padrão do webhook');
     }
 
-    // Chamar o webhook do n8n
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    });
+    let data;
+    let fetchedDirectly = false;
 
-    console.log(`📡 [PROXY] Status da resposta: ${response.status}`);
+    console.log('🔌 Tentando buscar dados diretamente da API da CEMIG...');
+    try {
+      const cemigResponse = await fetch('https://www.cemig.com.br/wp-json/api-busca-usinas/v1/send-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=buscar_dados_usina&usina_id=UHE_TRES_MARIAS',
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`❌ [PROXY] Erro do webhook: ${errorText}`);
-      return new Response(
-        JSON.stringify({ 
-          error: `Webhook error: ${response.status}`, 
-          details: errorText,
-          hint: 'Verifique se o workflow no n8n está ativo e a URL está correta nas configurações do admin.'
-        }),
-        { 
-          status: response.status, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
+      if (cemigResponse.ok) {
+        const rawJson = await cemigResponse.json();
+        
+        // Helper para formatar a data de ISO/UTC da CEMIG para DD/MM/YYYY HH:mm
+        const formatDate = (isoStr: string) => {
+          if (!isoStr) return "";
+          const date = new Date(isoStr);
+          const day = String(date.getUTCDate()).padStart(2, '0');
+          const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+          const year = date.getUTCFullYear();
+          const hours = String(date.getUTCHours()).padStart(2, '0');
+          const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+          return `${day}/${month}/${year} ${hours}:${minutes}`;
+        };
+
+        const getLatest = (arr: any[]) => arr && arr.length > 0 ? arr[arr.length - 1] : null;
+
+        const latestNivel = getLatest(rawJson.VAL_NIVEL);
+        const latestVol = getLatest(rawJson.VAL_VOLUTIL);
+        const latestAflu = getLatest(rawJson.VAL_VAZAOAFLU);
+        const latestDeflu = getLatest(rawJson.VAL_VAZAODEFLU);
+
+        const tempoRealItem = {
+          tipo: "tempo_real",
+          data_leitura: formatDate(latestNivel?.Timestamp),
+          nivel_inicial: "--",
+          volume_inicial: "--",
+          nivel_atual: latestNivel ? latestNivel.Value.toString() : "0",
+          volume_percentual: latestVol ? latestVol.Value.toString() : "0",
+          afluencia: latestAflu ? latestAflu.Value.toString() : "0",
+          defluencia: latestDeflu ? latestDeflu.Value.toString() : "0"
+        };
+
+        // Alinhar histórico de medições por Timestamp
+        const historyMap: Record<string, any> = {};
+
+        const processArray = (arr: any[], fieldName: string) => {
+          if (!arr) return;
+          for (const item of arr) {
+            const ts = item.Timestamp;
+            if (!historyMap[ts]) {
+              historyMap[ts] = {};
+            }
+            historyMap[ts][fieldName] = item.Value;
+          }
+        };
+
+        processArray(rawJson.VAL_NIVEL, 'nivel');
+        processArray(rawJson.VAL_VOLUTIL, 'volume');
+        processArray(rawJson.VAL_VAZAOAFLU, 'afluencia');
+        processArray(rawJson.VAL_VAZAODEFLU, 'defluencia');
+
+        // Formatar para a lista esperada pelo hook da aplicação
+        const historicoItems = Object.keys(historyMap)
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+          .map(ts => {
+            const val = historyMap[ts];
+            return {
+              tipo: "historico",
+              data_leitura: formatDate(ts),
+              nivel_inicial: "--",
+              volume_inicial: "--",
+              nivel_atual: val.nivel !== undefined ? val.nivel.toString() : "0",
+              volume_percentual: val.volume !== undefined ? val.volume.toString() : "0",
+              afluencia: val.afluencia !== undefined ? val.afluencia.toString() : "0",
+              defluencia: val.defluencia !== undefined ? val.defluencia.toString() : "0"
+            };
+          });
+
+        // Combinar os itens no array que o hook espera
+        data = [tempoRealItem, ...historicoItems];
+        fetchedDirectly = true;
+        console.log('✅ [PROXY] Sucesso ao buscar e mapear dados diretamente da CEMIG!');
+      } else {
+        console.warn(`⚠️ [PROXY] Falha ao consultar CEMIG (${cemigResponse.status}). Usando fallback para webhook.`);
+      }
+    } catch (err) {
+      console.error('⚠️ [PROXY] Erro ao consultar CEMIG diretamente:', err);
     }
 
-    const data = await response.json();
-    console.log(`✅ [PROXY] Dados recebidos:`, JSON.stringify(data).substring(0, 200));
+    // Se a busca direta falhou, usa o webhook do n8n como fallback
+    if (!fetchedDirectly) {
+      console.log('📡 [PROXY] Usando fallback para o webhook do n8n...');
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro no webhook: ${response.status}. Detalhes: ${errorText}`);
+      }
+
+      data = await response.json();
+      console.log(`✅ [PROXY] Dados recebidos do webhook:`, JSON.stringify(data).substring(0, 200));
+    }
 
     // Salvar dados na tabela dam_data
     const { error: upsertError } = await supabase
