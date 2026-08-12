@@ -1,47 +1,9 @@
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 
-// Auto-install pg if not present
-try {
-  await import('pg');
-} catch (err) {
-  console.log('📦 Instalando dependência "pg" para conectar ao banco de dados...');
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  execSync('npm install pg', { cwd: path.resolve(__dirname, '..'), stdio: 'inherit' });
-}
+const NEW_URL = 'https://ranchoprado.vendopro.com.br';
+const NEW_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogInNlcnZpY2Vfcm9sZSIsCiAgImlzcyI6ICJzdXBhYmFzZSIsCiAgImlhdCI6IDE3MTUwNTA4MDAsCiAgImV4cCI6IDE4NzI4MTcyMDAKfQ.O5VK2jG17UYT_PHvXJQV--DGaYPOuAgigi0RRhfJrj0';
 
-const { Client } = await import('pg');
-
-// Configurações do banco fornecidas pelo usuário
-const dbConfigs = [
-  {
-    host: 'ranchoprado.vendopro.com.br',
-    port: 5432,
-    user: 'postgres',
-    password: '15dcafe51aab1042fe3deab21fff64b5',
-    database: 'postgres',
-    ssl: { rejectUnauthorized: false }
-  },
-  {
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: '15dcafe51aab1042fe3deab21fff64b5',
-    database: 'postgres',
-    ssl: false
-  },
-  {
-    host: 'supabase_bbb_db',
-    port: 5432,
-    user: 'postgres',
-    password: '15dcafe51aab1042fe3deab21fff64b5',
-    database: 'postgres',
-    ssl: false
-  }
-];
+const supabase = createClient(NEW_URL, NEW_SERVICE_KEY);
 
 async function run() {
   console.log('🔌 Buscando dados em tempo real da represa de Três Marias no site da CEMIG...');
@@ -133,45 +95,22 @@ async function run() {
 
   const finalData = [tempoRealItem, ...historicoItems];
 
-  // Conectar ao Postgres e atualizar a tabela
-  let pgClient;
-  let connected = false;
-
-  for (const config of dbConfigs) {
-    console.log(`🔌 Tentando conectar ao banco em ${config.host}:${config.port}...`);
-    pgClient = new Client(config);
-    try {
-      await pgClient.connect();
-      console.log(`✅ Conectado ao Postgres em ${config.host}!`);
-      connected = true;
-      break;
-    } catch (err) {
-      console.warn(`⚠️ Falha ao conectar em ${config.host}:`, err.message);
-      try {
-        await pgClient.end();
-      } catch (e) {}
-    }
-  }
-
-  if (!connected) {
-    console.error('❌ Não foi possível conectar ao banco para salvar os dados da represa.');
-    process.exit(1);
-  }
-
   try {
-    console.log('💾 Salvando dados na tabela public.dam_data...');
-    const sql = `
-      INSERT INTO public.dam_data (id, data, updated_at)
-      VALUES (1, $1::jsonb, $2)
-      ON CONFLICT (id)
-      DO UPDATE SET data = EXCLUDED.data, updated_at = EXCLUDED.updated_at
-    `;
-    await pgClient.query(sql, [JSON.stringify(finalData), new Date().toISOString()]);
+    console.log('💾 Enviando dados para o Supabase via API HTTP (Porta 443)...');
+    const { error: upsertError } = await supabase
+      .from('dam_data')
+      .upsert({
+        id: 1,
+        data: finalData,
+        updated_at: new Date().toISOString()
+      });
+
+    if (upsertError) {
+      throw new Error(upsertError.message);
+    }
     console.log('🎉 Dados da represa salvos e atualizados com sucesso no banco de dados!');
   } catch (err) {
-    console.error('❌ Erro ao salvar dados no Postgres:', err.message);
-  } finally {
-    await pgClient.end();
+    console.error('❌ Erro ao salvar dados no Supabase:', err.message);
   }
 }
 
