@@ -1,7 +1,25 @@
 import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
+import path from 'path';
 
-const SUPABASE_URL = 'https://elteoovghevwrefykkyh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsdGVvb3ZnaGV2d3JlZnlra3loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxOTMwODMsImV4cCI6MjA5NTc2OTA4M30.rlNr3KOMAH-QlwUwsbNQZYiW6W66HMiUnSG1ZuZpvb0';
+// Tentar carregar do arquivo .env
+let envUrl = '';
+let envKey = '';
+try {
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const urlMatch = envContent.match(/VITE_SUPABASE_URL\s*=\s*["']?([^"'\r\n]+)["']?/);
+    const keyMatch = envContent.match(/VITE_SUPABASE_PUBLISHABLE_KEY\s*=\s*["']?([^"'\r\n]+)["']?/);
+    if (urlMatch) envUrl = urlMatch[1];
+    if (keyMatch) envKey = keyMatch[1];
+  }
+} catch (e) {
+  // Ignorar erros
+}
+
+const SUPABASE_URL = envUrl || 'https://ranchoprado.vendopro.com.br';
+const SUPABASE_ANON_KEY = envKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzE1MDUwODAwLAogICJleHAiOiAxODcyODE3MjAwCn0.0if6RmuwClXzN1FBo0qE4a8TNRrKEuVMPDC4PVK9O2A';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

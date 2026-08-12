@@ -1,7 +1,6 @@
 -- =============================================================
 -- SCRIPT: Aplicar migrações pendentes de imagens e storage
--- Execute este script no SQL Editor do Supabase Dashboard:
--- https://supabase.com/dashboard/project/elteoovghevwrefykkyh/sql/new
+-- https://ranchoprado.vendopro.com.br
 -- =============================================================
 
 -- 1. Adicionar colunas de imagens na tabela site_settings

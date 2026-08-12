@@ -4,8 +4,27 @@
  * Uso: node scripts/fix-storage-policies.mjs
  */
 
-const SUPABASE_URL = 'https://elteoovghevwrefykkyh.supabase.co';
-const PROJECT_ID = 'elteoovghevwrefykkyh';
+import fs from 'fs';
+import path from 'path';
+
+// Tentar carregar do arquivo .env
+let envUrl = '';
+let projectId = 'ranchoprado';
+try {
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const urlMatch = envContent.match(/VITE_SUPABASE_URL\s*=\s*["']?([^"'\r\n]+)["']?/);
+    const idMatch = envContent.match(/VITE_SUPABASE_PROJECT_ID\s*=\s*["']?([^"'\r\n]+)["']?/);
+    if (urlMatch) envUrl = urlMatch[1];
+    if (idMatch) projectId = idMatch[1];
+  }
+} catch (e) {
+  // Ignorar erros
+}
+
+const SUPABASE_URL = envUrl || 'https://ranchoprado.vendopro.com.br';
+const PROJECT_ID = projectId;
 
 // SQL para corrigir as policies
 const SQL = `
@@ -48,8 +67,8 @@ console.log('   Os buckets "configuracoes", "pacotes" e "blog" não têm');
 console.log('   política SELECT, o que impede uploads no Supabase Storage.\n');
 
 console.log('✅ SOLUÇÃO:');
-console.log('   Execute o SQL abaixo no Supabase SQL Editor:\n');
-console.log('   URL: https://supabase.com/dashboard/project/' + PROJECT_ID + '/sql/new\n');
+console.log('   Execute o SQL abaixo no editor SQL do seu painel Supabase:\n');
+console.log('   URL: ' + SUPABASE_URL + '\n');
 console.log('------- COPIE O SQL ABAIXO -------\n');
 console.log(SQL);
 console.log('-----------------------------------\n');
