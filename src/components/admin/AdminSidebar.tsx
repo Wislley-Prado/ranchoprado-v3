@@ -49,9 +49,11 @@ export const AdminSidebar = () => {
       {/* Logo/Brand */}
       <div className="p-6 border-b">
         <Link to="/admin" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Fish className="w-6 h-6 text-primary" />
-          </div>
+          <img
+            src="/logo-rancho-prado.png"
+            alt="Rancho Prado"
+            className="w-10 h-10 object-contain drop-shadow"
+          />
           <div>
             <h1 className="font-bold text-lg text-foreground">Rancho Prado</h1>
             <p className="text-xs text-muted-foreground">Painel Admin</p>

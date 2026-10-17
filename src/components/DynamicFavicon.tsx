@@ -32,18 +32,21 @@ export const DynamicFavicon = () => {
   });
 
   useEffect(() => {
-    if (!settings) return;
+    const faviconUrl =
+      settings?.favicon_url && !settings.favicon_url.includes('pradoaqui')
+        ? settings.favicon_url
+        : '/icons/icon-32x32.png';
 
-    if (settings.favicon_url) {
-      updateLink('icon', settings.favicon_url, undefined, 'image/png');
-      updateLink('icon', settings.favicon_url, '32x32', 'image/png');
-      updateLink('icon', settings.favicon_url, '16x16', 'image/png');
-      updateLink('apple-touch-icon', settings.favicon_url);
-    }
+    const pwaIconUrl =
+      (settings as any)?.pwa_icon_url && !(settings as any).pwa_icon_url.includes('pradoaqui')
+        ? (settings as any).pwa_icon_url
+        : '/icons/icon-192x192.png';
 
-    if ((settings as any).pwa_icon_url) {
-      updateLink('icon', (settings as any).pwa_icon_url, '192x192', 'image/png');
-    }
+    updateLink('icon', faviconUrl, undefined, 'image/png');
+    updateLink('icon', faviconUrl, '32x32', 'image/png');
+    updateLink('icon', faviconUrl, '16x16', 'image/png');
+    updateLink('apple-touch-icon', faviconUrl);
+    updateLink('icon', pwaIconUrl, '192x192', 'image/png');
   }, [settings]);
 
   return null;

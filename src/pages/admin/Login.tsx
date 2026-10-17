@@ -94,9 +94,11 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Fish className="w-8 h-8 text-primary" />
-            </div>
+            <img
+              src="/logo-rancho-prado.png"
+              alt="Rancho Prado"
+              className="w-20 h-20 object-contain drop-shadow-md hover:scale-105 transition-transform"
+            />
           </div>
           <CardTitle className="text-2xl font-bold">Painel Administrativo</CardTitle>
           <CardDescription>
