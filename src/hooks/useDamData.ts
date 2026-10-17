@@ -95,9 +95,42 @@ const mapNewApiDataToDamData = (apiData: NewApiResponseItem[]): DamData => {
   };
 };
 
-// Buscar dados diretamente do banco (cache)
-const fetchDamDataFromDB = async (): Promise<DamData> => {
-  if (import.meta.env.DEV) console.log('🔧 [FETCH] Buscando dados da represa do banco...');
+// Buscar dados com Edge Caching (sem sobrecarregar banco de dados)
+const fetchDamData = async (): Promise<DamData> => {
+  // 1. Tenta buscar da Edge API da Vercel (com cache de 30 minutos na CDN)
+  try {
+    const apiRes = await fetch('/api/dam-data', {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (apiRes.ok) {
+      const json = await apiRes.json();
+      if (json.sucesso && Array.isArray(json.dados) && json.dados.length > 0) {
+        const mapped = mapNewApiDataToDamData(json.dados);
+        if (json.dados_usina) {
+          mapped.dados_usina = json.dados_usina;
+          mapped.chuva = json.dados_usina.chuva !== undefined ? json.dados_usina.chuva.toString() : '0';
+          mapped.cota_minima = (json.dados_usina.cota_minima || 549.2).toString();
+          mapped.cota_maxima = (json.dados_usina.cota_maxima || 572.5).toString();
+          mapped.cota_maximorum = (json.dados_usina.cota_maximorum || 573.4).toString();
+        }
+        if (json.historico_medicoes) {
+          mapped.historico_medicoes = json.historico_medicoes;
+        }
+        if (json.historico_defluencia_48h) {
+          mapped.historico_defluencia_48h = json.historico_defluencia_48h;
+        }
+        if (json.leitura_formatada) {
+          mapped.data_atualizacao = json.leitura_formatada;
+        }
+        return mapped;
+      }
+    }
+  } catch (apiErr) {
+    if (import.meta.env.DEV) console.warn('Rota /api/dam-data não acessível diretamente, recorrendo ao banco...', apiErr);
+  }
+
+  // 2. Fallback de contingência: Buscar diretamente do Supabase
+  if (import.meta.env.DEV) console.log('🔧 [FETCH] Buscando dados da represa do banco Supabase...');
   
   const { data, error } = await supabase
     .from('dam_data')
@@ -111,19 +144,15 @@ const fetchDamDataFromDB = async (): Promise<DamData> => {
   }
 
   if (!data?.data || Object.keys(data.data as object).length === 0) {
-    if (import.meta.env.DEV) console.warn('⚠️ [FETCH] Dados vazios no banco, aguardando atualização do cron...');
-    throw new Error('Dados ainda não disponíveis. Aguarde a próxima atualização.');
+    throw new Error('Dados da represa não disponíveis no momento.');
   }
 
   const responseData = data.data as { sucesso?: boolean; dados?: NewApiResponseItem[] } | NewApiResponseItem[];
-  if (import.meta.env.DEV) console.log('📦 [FETCH] Dados do banco carregados, atualizado em:', data.updated_at);
 
-  // Formato com wrapper (sucesso/dados)
   if (responseData && 'sucesso' in responseData && Array.isArray(responseData.dados)) {
     return mapNewApiDataToDamData(responseData.dados);
   }
   
-  // Formato array direto
   if (Array.isArray(responseData) && responseData.length > 0) {
     return mapNewApiDataToDamData(responseData);
   }
@@ -134,9 +163,9 @@ const fetchDamDataFromDB = async (): Promise<DamData> => {
 export const useDamData = () => {
   return useQuery({
     queryKey: ['damData', 'cached'],
-    queryFn: fetchDamDataFromDB,
-    refetchInterval: 5 * 60 * 1000, // Verifica banco a cada 5 min
-    staleTime: 4 * 60 * 1000, // Dados ficam fresh por 4 min
+    queryFn: fetchDamData,
+    refetchInterval: 30 * 60 * 1000, // Revalida a cada 30 min (alinhado ao ciclo da CEMIG)
+    staleTime: 15 * 60 * 1000,      // Permanece fresco no navegador por 15 min
     retry: 2,
     retryDelay: 3000,
   });

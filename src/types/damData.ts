@@ -18,11 +18,26 @@ export interface DamData {
   data_atualizacao: string;
   hora_atualizacao: string;
   historico_dias: DamHistoryDay[];
-  // Novos campos da API de produção
+  // Novos campos da API de produção e CEMIG
   tendencia_represa?: string;
   timestamp_atualizacao?: string;
-  // Indicador de dados em tempo real indisponíveis
   usando_dados_historicos?: boolean;
+  chuva?: string;
+  cota_minima?: string;
+  cota_maxima?: string;
+  cota_maximorum?: string;
+  historico_medicoes?: { timestamp: string; hora: string; nivel: number }[];
+  historico_defluencia_48h?: { timestamp: string; hora: string; dataFormatada: string; defluencia: number }[];
+  dados_usina?: {
+    nivel_atual: number;
+    volume_util: number;
+    afluencia: number;
+    defluencia: number;
+    chuva: number;
+    cota_minima: number;
+    cota_maxima: number;
+    cota_maximorum: number;
+  };
 }
 
 export interface StatusInfo {

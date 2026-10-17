@@ -12,6 +12,7 @@ import ConditionsGrid from './dam/ConditionsGrid';
 import HistoryTable from './dam/HistoryTable';
 import DamDashboard from './dam/DamDashboard';
 import DamHistoryChart from './dam/DamHistoryChart';
+import CemigDamCard from './dam/CemigDamCard';
 
 const DamInfo = () => {
   const { data: damData, isLoading, error, refetch, dataUpdatedAt } = useDamData();
@@ -71,6 +72,14 @@ const DamInfo = () => {
           error={error ? errorForComponents : undefined}
           refetch={handleRefetch}
         />
+
+        <div className="mb-10">
+          <CemigDamCard
+            damData={damData}
+            isLoading={isLoading}
+            onRefresh={handleRefetch}
+          />
+        </div>
 
         <DamDashboard
           damData={damData}
