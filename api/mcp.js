@@ -1,15 +1,16 @@
-// api/mcp.js - Servidor MCP (Model Context Protocol) do Rancho Prado para Google Gemini
-// Permite que o Gemini publique no Blog, crie Anúncios e faça Upload de Imagens
+// api/mcp.js - Servidor MCP Oficial do Rancho Prado no Vercel Edge Runtime
+// Compatível com Google Gemini Connectors (Streamable HTTP, JSON-RPC 2.0 e SSE)
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ranchoprado.vendopro.com.br';
+export const config = {
+  runtime: 'edge'
+};
+
+const SUPABASE_URL = 'https://ranchoprado.vendopro.com.br';
 const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogInNlcnZpY2Vfcm9sZSIsCiAgImlzcyI6ICJzdXBhYmFzZSIsCiAgImlhdCI6IDE3MTUwNTA4MDAsCiAgImV4cCI6IDE4NzI4MTcyMDAKfQ.O5VK2jG17UYT_PHvXJQV--DGaYPOuAgigi0RRhfJrj0';
 
-// Token secreto para proteger o endpoint
-const EXPECTED_TOKEN = process.env.MCP_AUTH_TOKEN || 'rancho_gemini_2026';
+const EXPECTED_TOKEN = 'rancho_gemini_2026';
 
-// Função para gerar slug amigável a partir do título
 function slugify(text) {
   return text
     .toString()
@@ -21,7 +22,6 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
-// Lista de Ferramentas disponíveis para o Gemini
 const TOOLS = [
   {
     name: 'criar_post_blog',
@@ -184,7 +184,6 @@ const TOOLS = [
   }
 ];
 
-// Utilitário para chamadas REST ao Supabase
 async function supabaseFetch(path, options = {}) {
   const url = `${SUPABASE_URL}/rest/v1${path}`;
   const res = await fetch(url, {
@@ -207,7 +206,6 @@ async function supabaseFetch(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-// Handlers das ferramentas
 async function executarFerramenta(nome, args = {}) {
   switch (nome) {
     case 'criar_post_blog': {
@@ -332,28 +330,28 @@ async function executarFerramenta(nome, args = {}) {
         throw new Error('imagem_url_ou_base64 é obrigatória.');
       }
 
-      let buffer;
+      let arrayBufferData;
       let contentType = 'image/jpeg';
       let extension = 'jpg';
 
       if (imagem_url_ou_base64.startsWith('http://') || imagem_url_ou_base64.startsWith('https://')) {
-        // Baixar imagem da internet
         const imgRes = await fetch(imagem_url_ou_base64);
-        if (!imgRes.ok) {
-          throw new Error(`Falha ao baixar imagem remota: ${imgRes.status}`);
-        }
+        if (!imgRes.ok) throw new Error(`Falha ao baixar imagem: ${imgRes.status}`);
         contentType = imgRes.headers.get('content-type') || 'image/jpeg';
-        const arrayBuf = await imgRes.arrayBuffer();
-        buffer = Buffer.from(arrayBuf);
+        arrayBufferData = await imgRes.arrayBuffer();
       } else {
-        // Formato base64 (ex: data:image/png;base64,...)
-        let base64Data = imagem_url_ou_base64;
+        let base64 = imagem_url_ou_base64;
         const match = imagem_url_ou_base64.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
         if (match) {
           contentType = match[1];
-          base64Data = match[2];
+          base64 = match[2];
         }
-        buffer = Buffer.from(base64Data, 'base64');
+        const binaryString = atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        arrayBufferData = bytes.buffer;
       }
 
       if (contentType.includes('png')) extension = 'png';
@@ -363,7 +361,6 @@ async function executarFerramenta(nome, args = {}) {
       const cleanName = nome_arquivo ? slugify(nome_arquivo.replace(/\.[^/.]+$/, '')) : 'imagem';
       const finalFileName = `${cleanName}-${Date.now()}.${extension}`;
 
-      // Upload para o Storage do Supabase
       const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${bucket}/${finalFileName}`;
       const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
@@ -372,12 +369,12 @@ async function executarFerramenta(nome, args = {}) {
           apikey: SERVICE_KEY,
           'Content-Type': contentType
         },
-        body: buffer
+        body: arrayBufferData
       });
 
       if (!uploadRes.ok) {
         const errText = await uploadRes.text();
-        throw new Error(`Erro ao salvar imagem no Storage: ${errText}`);
+        throw new Error(`Erro no Storage Supabase: ${errText}`);
       }
 
       const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${finalFileName}`;
@@ -385,7 +382,6 @@ async function executarFerramenta(nome, args = {}) {
         sucesso: true,
         mensagem: 'Upload de imagem realizado com sucesso!',
         arquivo: finalFileName,
-        bucket,
         url_publica: publicUrl
       };
     }
@@ -395,11 +391,7 @@ async function executarFerramenta(nome, args = {}) {
       const posts = await supabaseFetch(
         `/blog_posts?select=id,titulo,slug,categoria,resumo,imagem_destaque,data_publicacao,publicado&order=created_at.desc&limit=${limite}`
       );
-      return {
-        sucesso: true,
-        quantidade: posts?.length || 0,
-        posts: posts || []
-      };
+      return { sucesso: true, quantidade: posts?.length || 0, posts: posts || [] };
     }
 
     case 'listar_anuncios': {
@@ -407,11 +399,7 @@ async function executarFerramenta(nome, args = {}) {
       const anuncios = await supabaseFetch(
         `/anuncios?select=id,titulo,subtitulo,tipo,posicao,imagem_url,imovel_preco,ativo&order=created_at.desc&limit=${limite}`
       );
-      return {
-        sucesso: true,
-        quantidade: anuncios?.length || 0,
-        anuncios: anuncios || []
-      };
+      return { sucesso: true, quantidade: anuncios?.length || 0, anuncios: anuncios || [] };
     }
 
     case 'obter_status_site': {
@@ -433,167 +421,174 @@ async function executarFerramenta(nome, args = {}) {
   }
 }
 
-// Handler da Serverless Function na Vercel
-export default async function handler(req, res) {
-  // Configuração completa de CORS para o Google Gemini
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, x-api-key, mcp-session-id, Accept'
-  );
+export default async function handler(req) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, HEAD',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key, mcp-session-id, Accept',
+    'Content-Type': 'application/json'
+  };
 
-  // Preflight CORS
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  // Verificação de autenticação (se o Gemini enviar token)
-  const headers = req.headers || {};
-  const authHeader = headers.authorization || headers['x-api-key'];
+  // Auth check
+  const authHeader = req.headers.get('authorization') || req.headers.get('x-api-key');
   if (authHeader) {
     const token = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (token !== EXPECTED_TOKEN && EXPECTED_TOKEN !== 'rancho_gemini_2026') {
-      return res.status(401).json({
-        jsonrpc: '2.0',
-        error: { code: -32000, message: 'Não autorizado: Token inválido.' }
+      return new Response(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          error: { code: -32000, message: 'Não autorizado: Token inválido.' }
+        }),
+        { status: 401, headers: corsHeaders }
+      );
+    }
+  }
+
+  // GET / HEAD (Handshake ou SSE)
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    const accept = req.headers.get('accept') || '';
+
+    if (accept.includes('text/event-stream')) {
+      const stream = new ReadableStream({
+        start(controller) {
+          const encoder = new TextEncoder();
+          controller.enqueue(encoder.encode(`event: endpoint\ndata: /api/mcp\n\n`));
+        }
+      });
+      return new Response(stream, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive'
+        }
       });
     }
+
+    return new Response(
+      JSON.stringify({
+        status: 'online',
+        name: 'Rancho Prado MCP Server',
+        protocolVersion: '2024-11-05',
+        description: 'Servidor MCP do Rancho Prado para Google Gemini.',
+        tools_available: TOOLS.map((t) => t.name)
+      }),
+      { status: 200, headers: corsHeaders }
+    );
   }
 
-  // Suporte a handshake GET (ex: quando Gemini testa a URL ou SSE)
-  if (req.method === 'GET' || req.method === 'HEAD') {
-    const accept = req.headers.accept || '';
-
-    // Se o cliente pedir Server-Sent Events (SSE)
-    if (accept.includes('text/event-stream')) {
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.write(`event: endpoint\ndata: /api/mcp\n\n`);
-      return res.end();
-    }
-
-    // Resposta padrão informativa de status
-    return res.status(200).json({
-      status: 'online',
-      name: 'Rancho Prado MCP Server',
-      protocolVersion: '2024-11-05',
-      description:
-        'Servidor MCP oficial do Rancho Prado para publicação no Blog, Anúncios e Upload de Imagens pelo Google Gemini.',
-      tools_available: TOOLS.map((t) => t.name)
-    });
-  }
-
-  // Requisições POST (Protocolo JSON-RPC 2.0 do MCP)
+  // POST (JSON-RPC 2.0)
   if (req.method === 'POST') {
     try {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const body = await req.json();
       const { jsonrpc = '2.0', id, method, params = {} } = body || {};
 
-      // 1. Handshake inicial MCP
       if (method === 'initialize') {
-        return res.status(200).json({
-          jsonrpc: '2.0',
-          id: id ?? 1,
-          result: {
-            protocolVersion: params.protocolVersion || '2024-11-05',
-            capabilities: {
-              tools: {
-                listChanged: false
+        return new Response(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: id ?? 1,
+            result: {
+              protocolVersion: params.protocolVersion || '2024-11-05',
+              capabilities: {
+                tools: { listChanged: false }
+              },
+              serverInfo: {
+                name: 'rancho-prado-mcp',
+                version: '1.0.0'
               }
-            },
-            serverInfo: {
-              name: 'rancho-prado-mcp',
-              version: '1.0.0'
             }
-          }
-        });
+          }),
+          { status: 200, headers: corsHeaders }
+        );
       }
 
-      // 2. Confirmação de inicialização
       if (method === 'notifications/initialized' || method === 'initialized') {
         if (id !== undefined && id !== null) {
-          return res.status(200).json({ jsonrpc: '2.0', id, result: {} });
+          return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: {} }), {
+            status: 200,
+            headers: corsHeaders
+          });
         }
-        return res.status(200).end();
+        return new Response(null, { status: 200, headers: corsHeaders });
       }
 
-      // 3. Ping / Liveness
       if (method === 'ping') {
-        return res.status(200).json({ jsonrpc: '2.0', id, result: {} });
-      }
-
-      // 4. Listagem de Ferramentas disponíveis
-      if (method === 'tools/list') {
-        return res.status(200).json({
-          jsonrpc: '2.0',
-          id,
-          result: {
-            tools: TOOLS
-          }
+        return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: {} }), {
+          status: 200,
+          headers: corsHeaders
         });
       }
 
-      // 5. Execução de Ferramentas
+      if (method === 'tools/list') {
+        return new Response(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id,
+            result: { tools: TOOLS }
+          }),
+          { status: 200, headers: corsHeaders }
+        );
+      }
+
       if (method === 'tools/call') {
         const toolName = params.name;
         const toolArgs = params.arguments || {};
 
         try {
           const resultado = await executarFerramenta(toolName, toolArgs);
-          return res.status(200).json({
-            jsonrpc: '2.0',
-            id,
-            result: {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(resultado, null, 2)
-                }
-              ],
-              isError: false
-            }
-          });
+          return new Response(
+            JSON.stringify({
+              jsonrpc: '2.0',
+              id,
+              result: {
+                content: [{ type: 'text', text: JSON.stringify(resultado, null, 2) }],
+                isError: false
+              }
+            }),
+            { status: 200, headers: corsHeaders }
+          );
         } catch (execError) {
-          console.error(`Erro ao executar ferramenta ${toolName}:`, execError);
-          return res.status(200).json({
-            jsonrpc: '2.0',
-            id,
-            result: {
-              content: [
-                {
-                  type: 'text',
-                  text: `Erro na execução: ${execError.message}`
-                }
-              ],
-              isError: true
-            }
-          });
+          return new Response(
+            JSON.stringify({
+              jsonrpc: '2.0',
+              id,
+              result: {
+                content: [{ type: 'text', text: `Erro: ${execError.message}` }],
+                isError: true
+              }
+            }),
+            { status: 200, headers: corsHeaders }
+          );
         }
       }
 
-      // Método não suportado
-      return res.status(200).json({
-        jsonrpc: '2.0',
-        id: id ?? null,
-        error: {
-          code: -32601,
-          message: `Método MCP não encontrado: ${method}`
-        }
-      });
+      return new Response(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id: id ?? null,
+          error: { code: -32601, message: `Método não suportado: ${method}` }
+        }),
+        { status: 200, headers: corsHeaders }
+      );
     } catch (parseError) {
-      console.error('Erro ao processar JSON-RPC MCP:', parseError);
-      return res.status(400).json({
-        jsonrpc: '2.0',
-        id: null,
-        error: {
-          code: -32700,
-          message: `Erro ao analisar JSON: ${parseError.message}`
-        }
-      });
+      return new Response(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id: null,
+          error: { code: -32700, message: `JSON inválido: ${parseError.message}` }
+        }),
+        { status: 400, headers: corsHeaders }
+      );
     }
   }
 
-  return res.status(405).json({ error: 'Método não permitido' });
+  return new Response(JSON.stringify({ error: 'Método não permitido' }), {
+    status: 405,
+    headers: corsHeaders
+  });
 }
