@@ -1,4 +1,4 @@
-project_id = "elteoovghevwrefykkyh"
+project_id = "ranchoprado"
 
 [functions.limpar-whatsapp-analytics]
 verify_jwt = true
